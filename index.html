@@ -1,60 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
-    
+    <title>Tu Nombre - Portafolio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
 
-    <title>Document</title>
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
 
-    <link rel="stylesheet" href="estilos.css" type="text/css">
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
 
-    
+        nav {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin: 10px;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .portfolio-item {
+            margin: 20px;
+            padding: 20px;
+            background-color: #ddd;
+        }
+    </style>
 </head>
-
 <body>
-    <div class="container">
+    <header>
+        <h1>Tu Nombre</h1>
+    </header>
 
-        <div class="tablero">
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            <button class="casilla jugar" ></button>
-            
-        </div>
+    <nav>
+        <a href="#about">Acerca de Mí</a>
+        <a href="#portfolio">Portafolio</a>
+        <a href="#contact">Contacto</a>
+    </nav>
 
-        <div class="leftbottons">
-            <button class="Reset b" id="reset" >Reset</button>
-            <button class="iAStart b jugar" >IA Start</button>
-        </div>
-
-        <div class="select_figura">
-            <button class="changefigure b " id="change">⇄</button>
-            <p class="figura left X" >X</p>
-            <p class="figura right O" >O</p>
-            <p class="nombre">Human</p>
-            <p class="nombre">IA</p>
-        </div>
-
-        <h1>¡Do it!</h1>
-
-
-        
-        
+    <div class="container" id="about">
+        <h2>Acerca de Mí</h2>
+        <p>¡Hola! Soy [Tu Nombre] y soy un [tu ocupación]. Estoy apasionado por [tus intereses o habilidades].</p>
     </div>
 
-    <script src="main.js">
-   
+    <div class="container" id="portfolio">
+        <h2>Portafolio</h2>
+        <div class="portfolio-item">
+            <h3>Proyecto 1</h3>
+            <p>Descripción del proyecto 1.</p>
+        </div>
 
-    </script>
+        <div class="portfolio-item">
+            <h3>Proyecto 2</h3>
+            <p>Descripción del proyecto 2.</p>
+        </div>
+    </div>
+
+    <div class="container" id="contact">
+        <h2>Contacto</h2>
+        <p>Puedes contactarme en [tu correo electrónico]. También puedes encontrarme en [tus redes sociales].</p>
+    </div>
 </body>
 </html>

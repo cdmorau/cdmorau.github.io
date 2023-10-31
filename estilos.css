@@ -126,4 +126,34 @@ h1{
 
 }
 
+/* Estilos generales (sin cambios) */
 
+@media screen and (max-width: 800px) {
+    /* Reducimos el tamaño de todos los componentes a un 80% del ancho de la pantalla */
+    body {
+    transform: scale(0.6);
+  }
+  
+  /* Aumentamos el tamaño de los botones para que sigan siendo visibles */
+  .b {
+    font-size: 30px;
+  }
+  
+  /* Aumentamos el tamaño del encabezado para que siga siendo legible */
+  h1 {
+    font-size: 60px;
+  }
+
+  
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+    .tablero {
+        grid-row: 2/3;
+    }
+    .leftbottons {
+        order: -1;
+    }
+
+}

@@ -261,6 +261,8 @@ h1{
     font-size: 50px;
 
 }
+
+
 @media (max-width: 1000px) {
     /* Reducimos el tamaño de todos los componentes a un 80% del ancho de la pantalla */
     

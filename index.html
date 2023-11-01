@@ -1,87 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tu Nombre - Portafolio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 36px;
-        }
-
-        nav {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #333;
-            margin: 10px;
-        }
-
-        .container {
-            width: 80%;
-            margin: auto;
-            padding: 20px;
-            background-color: #fff;
-        }
-
-        .portfolio-item {
-            margin: 20px;
-            padding: 20px;
-            background-color: #ddd;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Cristhian Mora</h1>
-    </header>
 
     <nav>
-        <a href="#about">Acerca de Mí</a>
-        <a href="#portfolio">Portafolio</a>
-        <a href="#contact">Contacto</a>
+        <ul>
+            <li><a href="#about">¿Quien Soy?</a></li>
+            <li><a href="#projects">Proyectos</a></li>
+            <li><a href="#contact">Contacto</a></li>
+        </ul>
     </nav>
 
-    <div class="container" id="about">
-        <h2>Acerca de Mí</h2>
-        <p>¡Hola! soy un Desarrollador apasionado por la programación!.</p>
-    </div>
+    <header>
+        <div>
+            <img src="img/me-removebg-preview.png" alt="me" id="imagen1">
+        </div>
+        <div class="clas">
+            <h1>¡Hola, soy Cris!</h1>
+            <p>Data Analyst y Desarrollador Web</p>
+                    
+        
+            <a class="download-button" href="docs/CV.pdf" download>Descarga mi CV (PDF)</a>
+            <p></p>
+            <div class="contact-buttons">
+                
+                <a class="linkedin-button" href="https://www.linkedin.com/in/cdmorau/" target="_blank">LinkedIn</a>
+                <a class="github-button" href="https://github.com/cdmorau" target="_blank">GitHub</a>
+                
+            </div>
+            
+        </div>
+        
+        
+        
+        
+    </header>
+    
+    
+    
+    <section id="about" class="about-animation">
+        <h2>¿Quien Soy?</h2>
+        <p>Siempre estoy buscando oportunidades para ampliar mis conocimientos. Creo firmemente en la importancia de la colaboración y la comunicación eficaz dentro de los equipos de desarrollo.
 
-    <div class="container" id="portfolio">
-        <h2>Portafolio</h2>
-        <div class="portfolio-item">
-            <h3>TicTacToe_Invencible</h3>
-            <p>TicTacToe haciendo uso de agentes y ambientes implementado en js</p>
-            <a href="tiktaktoe.html" target="_blank">ver
-            </a>
+            Mi objetivo es aprovechar mis habilidades y adaptabilidad para asumir nuevos desafíos y contribuir a proyectos que marquen la diferencia. Si está buscando un desarrollador junior dedicado con mentalidad de crecimiento, conectemos y exploremos oportunidades potenciales.</p>
+        
+    </section>
+    
+    <section id="projects">
+        <h2>Proyectos Destacados</h2>
+
+        <div class="Proyectos">
+            <div class="project">
+                <a href="tiktaktoe.html" >
+                    <img src="img/tiktaktoe.bmp" alt="Proyecto 1" >
+                </a>
+                <p></p>
+                <h3>Agente con Tic Tac Toe</h3>
+                <p>TicTacToe invencible implementando modelos basados en agentes y algoritmo min-max.</p>
+            </div>
+            
+            <div class="project">
+                <a href="tiktaktoe.html" >
+                    <img src="img/tiktaktoe.bmp" alt="Proyecto 1" >
+                </a>
+                <p></p>
+                <h3>Agente con Tic Tac Toe</h3>
+                <p>TicTacToe invencible implementando modelos basados en agentes y algoritmo min-max.</p>
+            </div>
+
         </div>
 
-        <div class="portfolio-item">
-            <h3>Proyecto 2</h3>
-            <p>Descripción del proyecto 2.</p>
-        </div>
-    </div>
-
-    <div class="container" id="contact">
+    </section>
+    
+    <section id="contact">
         <h2>Contacto</h2>
-        <p>Puedes contactarme en [tu correo electrónico]. También puedes encontrarme en [tus redes sociales].</p>
-    </div>
+
+        
+        <p>Phone: +57 317 679 6904 </p>
+
+        <div style="display: flex; flex-direction: row; ">
+            
+            <p id="text-to-copy">cdmorau@unal.edu.co</p>
+            <button class="linkedin-button" id="copy-button">📋</button>
+            
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2023 | Mi Portafolio</p>
+    </footer>
+
+<script src="main3.js">
+    
+</script>
 </body>
+
+
 </html>

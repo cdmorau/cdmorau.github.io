@@ -269,12 +269,12 @@ h1{
     grid-template-rows:20% 60% 0% 10%
   }
   .select_figura{
-    grid-row: 4/5;
+    grid-row: 3;
     grid-column: 2/2;
     
   }
   .leftbottons{
-    grid-row: 4/5;
+    grid-row: 3;
     grid-column: 1/2;
   }
   .tablero{

@@ -196,6 +196,8 @@ footer {
     #imagen1{
         grid-row: 2;
         align-content: right;
+        width: 50%;
+        height: 50%;
     }
 
 }

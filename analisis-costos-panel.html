@@ -247,6 +247,156 @@
       height: 220px;
     }
 
+    .viz {
+      min-height: 220px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .tradeoff-viz {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 10px;
+    }
+
+    .tradeoff-map {
+      position: relative;
+      min-height: 198px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(23,128,61,.08) 50%, rgba(23,128,61,.08)),
+        linear-gradient(0deg, transparent 49%, rgba(29,100,216,.10) 50%, rgba(29,100,216,.10));
+      overflow: hidden;
+    }
+
+    .tradeoff-axis {
+      position: absolute;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .tradeoff-axis.x { left: 10px; bottom: 8px; }
+    .tradeoff-axis.y {
+      left: 8px;
+      top: 8px;
+    }
+
+    .bubble {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      transform: translate(-50%, 50%);
+      box-shadow: 0 8px 18px rgba(0,0,0,.18);
+    }
+
+    .bubble.good-bg { background: var(--green); }
+    .bubble.warn-bg { background: var(--amber); }
+    .bubble.bad-bg { background: var(--red); }
+
+    .viz-list {
+      display: grid;
+      gap: 7px;
+      align-content: start;
+    }
+
+    .viz-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #faf9f6;
+    }
+
+    .viz-row strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .viz-row span,
+    .viz-row small {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .viz-row .amount {
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .hbar-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .hbar-row {
+      display: grid;
+      grid-template-columns: minmax(94px, .8fr) minmax(120px, 1.5fr) auto;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .hbar-row label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .track {
+      height: 16px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ece9e1;
+    }
+
+    .fill {
+      height: 100%;
+      min-width: 2px;
+      border-radius: inherit;
+      background: var(--green);
+    }
+
+    .fill.cost { background: var(--amber); }
+    .fill.bad-bg { background: var(--red); }
+
+    .value-chip {
+      min-width: 54px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .waterfall-viz {
+      display: grid;
+      gap: 8px;
+    }
+
+    .waterfall-total {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      background: #f2f7f3;
+      color: var(--green);
+      font-weight: 900;
+    }
+
     .decision-copy {
       color: var(--muted);
       font-size: 13px;
@@ -596,6 +746,22 @@
         height: 210px;
       }
 
+      .viz {
+        min-height: 210px;
+      }
+
+      .tradeoff-viz {
+        grid-template-columns: 1fr;
+      }
+
+      .tradeoff-map {
+        min-height: 160px;
+      }
+
+      .hbar-row {
+        grid-template-columns: 86px 1fr auto;
+      }
+
       #decisiones .grid,
       #variables .grid,
       #graficas .grid {
@@ -714,19 +880,19 @@
         <div class="chart-grid-tight">
           <div class="card chart-card">
             <h3>Matriz ahorro vs ganancia</h3>
-            <canvas id="tradeoffChart" width="720" height="340"></canvas>
+            <div class="viz tradeoff-viz" id="tradeoffViz"></div>
           </div>
           <div class="card chart-card">
             <h3>Cascada del escenario critico</h3>
-            <canvas id="waterfallChart" width="720" height="340"></canvas>
+            <div class="viz waterfall-viz" id="waterfallViz"></div>
           </div>
           <div class="card chart-card">
             <h3>Ganancia por camisa</h3>
-            <canvas id="perShirtChart" width="720" height="340"></canvas>
+            <div class="viz" id="perShirtViz"></div>
           </div>
           <div class="card chart-card">
             <h3>Exposicion por envio</h3>
-            <canvas id="shippingExposureChart" width="720" height="340"></canvas>
+            <div class="viz" id="shippingExposureViz"></div>
           </div>
         </div>
       </article>
@@ -1348,6 +1514,93 @@
       ctx.fillText("Escenario critico: " + result.name, pad.left, 18);
     }
 
+    function renderTradeoffViz(results) {
+      const box = byId("tradeoffViz");
+      const maxSavings = Math.max(1, ...results.map((item) => item.customerSavings));
+      const minProfit = Math.min(0, ...results.map((item) => item.profit));
+      const maxProfit = Math.max(1, ...results.map((item) => item.profit));
+      const profitRange = maxProfit - minProfit || 1;
+      const bubbles = results.map((item, index) => {
+        const left = Math.max(7, Math.min(93, (item.customerSavings / maxSavings) * 88 + 6));
+        const bottom = Math.max(8, Math.min(92, ((item.profit - minProfit) / profitRange) * 84 + 8));
+        const tone = item.profit < 0 ? "bad-bg" : item.margin < .2 ? "warn-bg" : "good-bg";
+        return `<div class="bubble ${tone}" style="left:${left}%;bottom:${bottom}%">${index + 1}</div>`;
+      }).join("");
+      const rows = results
+        .slice()
+        .sort((a, b) => b.profit - a.profit)
+        .map((item, index) => `
+          <div class="viz-row">
+            <div>
+              <strong>${index + 1}. ${escapeHtml(item.name)}</strong>
+              <span>${formatMoney(item.customerSavings)} ahorro · ${pct.format(item.margin)} margen</span>
+            </div>
+            <div class="amount ${item.profit < 0 ? "bad" : "good"}">${formatMoney(item.profit)}</div>
+          </div>
+        `).join("");
+
+      box.innerHTML = `
+        <div class="tradeoff-map">
+          <span class="tradeoff-axis y">mas ganancia</span>
+          <span class="tradeoff-axis x">mas ahorro</span>
+          ${bubbles}
+        </div>
+        <div class="viz-list">${rows}</div>
+      `;
+    }
+
+    function renderWaterfallViz(result) {
+      const box = byId("waterfallViz");
+      const items = [
+        { label: "Cliente paga", value: result.totalPaid, tone: "good" },
+        { label: "Producto", value: -result.variableCost, tone: "cost" },
+        { label: "Pedido + envio", value: -result.orderCost, tone: "cost" },
+        { label: "Pasarela", value: -result.paymentCost, tone: "cost" },
+        { label: "Pauta", value: -result.adCost, tone: "cost" },
+        { label: "Cambios", value: -result.returnCost, tone: "cost" }
+      ];
+      const maxAbs = Math.max(1, ...items.map((item) => Math.abs(item.value)), Math.abs(result.profit));
+      const rows = items.map((item) => {
+        const width = Math.max(4, Math.abs(item.value) / maxAbs * 100);
+        return `
+          <div class="hbar-row">
+            <label>${item.label}</label>
+            <div class="track"><div class="fill ${item.tone === "cost" ? "cost" : ""}" style="width:${width}%"></div></div>
+            <span class="value-chip">${formatMoney(item.value)}</span>
+          </div>
+        `;
+      }).join("");
+      box.innerHTML = `
+        <div class="waterfall-total">
+          <span>${escapeHtml(result.name)}</span>
+          <span>${formatMoney(result.profit)} ganancia</span>
+        </div>
+        <div class="hbar-list">${rows}</div>
+      `;
+    }
+
+    function renderHorizontalBars(targetId, results, key, options = {}) {
+      const box = byId(targetId);
+      const max = Math.max(1, ...results.map((item) => Math.abs(item[key])));
+      const rows = results.map((item) => {
+        const value = item[key];
+        const width = Math.max(2, Math.abs(value) / max * 100);
+        const tone = value < 0 ? "bad-bg" : options.cost ? "cost" : "";
+        const suffix = options.secondary ? options.secondary(item) : "";
+        return `
+          <div class="hbar-row">
+            <label>${escapeHtml(item.name.replace(" camisa", ""))}</label>
+            <div>
+              <div class="track"><div class="fill ${tone}" style="width:${width}%"></div></div>
+              ${suffix ? `<small>${suffix}</small>` : ""}
+            </div>
+            <span class="value-chip">${options.percent ? pct.format(value) : formatMoney(value)}</span>
+          </div>
+        `;
+      }).join("");
+      box.innerHTML = `<div class="hbar-list">${rows}</div>`;
+    }
+
     function compactMoney(value) {
       const abs = Math.abs(value);
       if (abs >= 1000000) return "$" + Math.round(value / 1000000) + "M";
@@ -1467,10 +1720,15 @@
       drawBars("savingsChart", labels, results.map((item) => item.customerSavings), { color: "#1d64d8" });
       drawBars("marginChart", labels, results.map((item) => item.margin), { color: "#0f766e", percent: true });
       drawStackedCost("costChart", results);
-      drawTradeoff("tradeoffChart", results);
-      drawWaterfall("waterfallChart", worst);
-      drawBars("perShirtChart", labels, results.map((item) => item.profitPerShirt), { color: "#17803d" });
-      drawBars("shippingExposureChart", labels, results.map((item) => item.shippingAbsorbed), { color: "#a45f00" });
+      renderTradeoffViz(results);
+      renderWaterfallViz(worst);
+      renderHorizontalBars("perShirtViz", results, "profitPerShirt", {
+        secondary: (item) => `${pct.format(item.marginPerShirt)} margen/camisa`
+      });
+      renderHorizontalBars("shippingExposureViz", results, "shippingAbsorbed", {
+        cost: true,
+        secondary: (item) => `${formatMoney(item.shippingCost)} costo real`
+      });
       syncQuickControls();
     }
 

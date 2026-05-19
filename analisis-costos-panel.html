@@ -45,13 +45,13 @@
     .hero {
       background: linear-gradient(135deg, #111827 0%, #18314f 54%, #0f766e 100%);
       color: #fff;
-      padding: 34px 0 30px;
+      padding: 18px 0 16px;
     }
 
     .hero h1 {
-      margin: 10px 0 12px;
+      margin: 8px 0 8px;
       max-width: 920px;
-      font-size: clamp(34px, 5vw, 60px);
+      font-size: clamp(26px, 3.4vw, 44px);
       line-height: 1;
       letter-spacing: 0;
     }
@@ -60,7 +60,7 @@
       margin: 0;
       max-width: 900px;
       color: rgba(255,255,255,.82);
-      font-size: 17px;
+      font-size: 15px;
     }
 
     .brand {
@@ -110,9 +110,9 @@
       font-weight: 700;
     }
 
-    main { padding: 24px 0 46px; }
+    main { padding: 14px 0 46px; }
 
-    section { margin-top: 24px; }
+    section { margin-top: 16px; }
 
     h2 {
       margin: 0 0 12px;
@@ -134,6 +134,124 @@
     .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+    .decision-lab {
+      display: grid;
+      grid-template-columns: minmax(300px, .95fr) minmax(420px, 1.25fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .lab-panel {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .focus-item {
+      min-height: 76px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .focus-item strong {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .focus-item span {
+      display: block;
+      margin-top: 6px;
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .focus-item small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .quick-controls {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      align-items: end;
+    }
+
+    .quick-controls .control {
+      margin-bottom: 0;
+      gap: 4px;
+    }
+
+    .quick-controls input,
+    .quick-controls select {
+      min-height: 36px;
+      padding: 7px 8px;
+      font-size: 13px;
+    }
+
+    .quick-controls label {
+      font-size: 11px;
+    }
+
+    .compact-presets {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .compact-presets .card {
+      padding: 10px;
+      box-shadow: none;
+    }
+
+    .compact-presets p {
+      display: none;
+    }
+
+    .compact-presets .pill {
+      padding: 3px 7px;
+    }
+
+    .chart-grid-tight {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .chart-card {
+      padding: 10px;
+    }
+
+    .chart-card h3 {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .chart-card canvas {
+      height: 220px;
+    }
+
+    .decision-copy {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
 
     .card {
       background: var(--surface);
@@ -350,8 +468,17 @@
     @media (max-width: 920px) {
       .grid.cols-3,
       .grid.cols-4,
-      .grid.cols-2 {
+      .grid.cols-2,
+      .grid.cols-6,
+      .decision-lab,
+      .quick-controls,
+      .compact-presets,
+      .chart-grid-tight {
         grid-template-columns: 1fr;
+      }
+
+      .focus-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .scenario-row,
@@ -360,6 +487,129 @@
       }
 
       canvas { height: 260px; }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(100% - 18px, 520px);
+      }
+
+      .hero {
+        padding: 13px 0 12px;
+      }
+
+      .hero h1 {
+        font-size: 24px;
+        line-height: 1.04;
+      }
+
+      .hero p {
+        display: none;
+      }
+
+      .mark {
+        width: 30px;
+        height: 30px;
+      }
+
+      .brand {
+        font-size: 13px;
+      }
+
+      .nav .shell {
+        gap: 6px;
+        padding: 8px 0;
+      }
+
+      .nav a {
+        padding: 7px 8px;
+        font-size: 12px;
+      }
+
+      main {
+        padding-top: 10px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .card {
+        padding: 12px;
+        box-shadow: none;
+      }
+
+      .decision-lab {
+        gap: 10px;
+      }
+
+      .decision-copy {
+        font-size: 12px;
+      }
+
+      .focus-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .focus-item {
+        min-height: 68px;
+        padding: 9px;
+      }
+
+      .focus-item:nth-child(n+5) {
+        display: none;
+      }
+
+      .focus-item span {
+        font-size: 18px;
+      }
+
+      .quick-controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .compact-presets {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .compact-presets .card {
+        padding: 9px;
+      }
+
+      .compact-presets strong {
+        font-size: 13px;
+      }
+
+      .compact-presets .btn {
+        width: 100%;
+      }
+
+      .chart-grid-tight {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-grid-tight .chart-card:nth-child(n+2) {
+        display: none;
+      }
+
+      .chart-card canvas {
+        height: 210px;
+      }
+
+      #decisiones .grid,
+      #variables .grid,
+      #graficas .grid {
+        gap: 10px;
+      }
+
+      .scenario-row {
+        gap: 6px;
+      }
+
+      table {
+        min-width: 840px;
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -374,6 +624,7 @@
 
   <nav class="nav" aria-label="Secciones">
     <div class="shell">
+      <a href="#tablero">Tablero</a>
       <a href="#decisiones">Decisiones</a>
       <a href="#variables">Variables</a>
       <a href="#escenarios">Escenarios</a>
@@ -384,6 +635,103 @@
   </nav>
 
   <main class="shell">
+    <section id="tablero" class="decision-lab" aria-label="Tablero de decision">
+      <article class="card lab-panel">
+        <div>
+          <h2>Tablero de decision</h2>
+          <p class="decision-copy" id="decisionSummary">Ajusta precio, costos, envio y cupon para ver el efecto inmediato.</p>
+        </div>
+        <div class="focus-grid" aria-label="Valores foco">
+          <div class="focus-item">
+            <strong>Ganancia bruta</strong>
+            <span id="focusProfit">$0</span>
+            <small id="focusProfitHint">Mejor escenario</small>
+          </div>
+          <div class="focus-item">
+            <strong>Margen minimo</strong>
+            <span id="focusMinMargin">0%</span>
+            <small id="focusMinMarginHint">Riesgo operativo</small>
+          </div>
+          <div class="focus-item">
+            <strong>Ganancia/camisa</strong>
+            <span id="focusPerShirt">$0</span>
+            <small>Promedio por unidad</small>
+          </div>
+          <div class="focus-item">
+            <strong>Ahorro cliente</strong>
+            <span id="focusSavings">$0</span>
+            <small>Descuento + envio gratis</small>
+          </div>
+          <div class="focus-item">
+            <strong>Envio absorbido</strong>
+            <span id="focusShipping">$0</span>
+            <small>Costo asumido por PANEL</small>
+          </div>
+          <div class="focus-item">
+            <strong>Pago promedio</strong>
+            <span id="focusPaid">$0</span>
+            <small>Ticket final cliente</small>
+          </div>
+        </div>
+
+        <div class="quick-controls" aria-label="Controles rapidos">
+          <div class="control">
+            <label for="qPrice">Precio</label>
+            <input id="qPrice" data-sync="price" type="number" min="0" step="1000">
+          </div>
+          <div class="control">
+            <label for="qCostShirt">Camiseta</label>
+            <input id="qCostShirt" data-sync="costShirt" type="number" min="0" step="100">
+          </div>
+          <div class="control">
+            <label for="qCostPrint">Estampado</label>
+            <input id="qCostPrint" data-sync="costPrint" type="number" min="0" step="100">
+          </div>
+          <div class="control">
+            <label for="qCouponPct">Cupon %</label>
+            <input id="qCouponPct" data-sync="couponPct" type="number" min="0" max="100" step="1">
+          </div>
+          <div class="control">
+            <label for="qShippingPolicy">Envio</label>
+            <select id="qShippingPolicy" data-sync="shippingPolicy">
+              <option value="bogota_free_national_charge">Bogota gratis</option>
+              <option value="always_charge">Cobra siempre</option>
+              <option value="always_free">Gratis siempre</option>
+              <option value="free_over_threshold">Gratis desde monto</option>
+              <option value="bogota_free_national_threshold">Bogota + umbral</option>
+            </select>
+          </div>
+          <div class="control">
+            <label for="qFreeShippingThreshold">Umbral</label>
+            <input id="qFreeShippingThreshold" data-sync="freeShippingThreshold" type="number" min="0" step="1000">
+          </div>
+        </div>
+
+        <div class="compact-presets" id="presetCardsCompact"></div>
+      </article>
+
+      <article class="lab-panel">
+        <div class="chart-grid-tight">
+          <div class="card chart-card">
+            <h3>Matriz ahorro vs ganancia</h3>
+            <canvas id="tradeoffChart" width="720" height="340"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Cascada del escenario critico</h3>
+            <canvas id="waterfallChart" width="720" height="340"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Ganancia por camisa</h3>
+            <canvas id="perShirtChart" width="720" height="340"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Exposicion por envio</h3>
+            <canvas id="shippingExposureChart" width="720" height="340"></canvas>
+          </div>
+        </div>
+      </article>
+    </section>
+
     <section class="grid cols-4" aria-label="Resumen">
       <article class="card metric">
         <div class="label">Mejor escenario por utilidad</div>
@@ -763,6 +1111,7 @@
       const revenuePerShirt = totalPaid / qty;
       const marginPerShirt = revenuePerShirt > 0 ? profitPerShirt / revenuePerShirt : 0;
       const customerSavings = productDiscount + Math.max(0, shipping.normalCharge - shippingPaid);
+      const shippingAbsorbed = Math.max(0, shipping.cost - shippingPaid);
 
       return {
         ...scenario,
@@ -773,6 +1122,7 @@
         productDiscount,
         shippingCharged: shippingPaid,
         shippingCost: shipping.cost,
+        shippingAbsorbed,
         customerSavings,
         totalPaid,
         totalCost,
@@ -893,6 +1243,111 @@
       });
     }
 
+    function drawTradeoff(canvasId, results) {
+      const canvas = byId(canvasId);
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      const pad = { left: 70, right: 30, top: 28, bottom: 58 };
+      const maxSavings = Math.max(1, ...results.map((item) => item.customerSavings));
+      const minProfit = Math.min(0, ...results.map((item) => item.profit));
+      const maxProfit = Math.max(1, ...results.map((item) => item.profit));
+      const rangeProfit = maxProfit - minProfit || 1;
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+
+      ctx.strokeStyle = "#d9d6ce";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pad.left, pad.top, plotW, plotH);
+
+      const zeroY = pad.top + plotH - ((0 - minProfit) / rangeProfit) * plotH;
+      ctx.strokeStyle = "#aeb4bd";
+      ctx.beginPath();
+      ctx.moveTo(pad.left, zeroY);
+      ctx.lineTo(width - pad.right, zeroY);
+      ctx.stroke();
+
+      ctx.fillStyle = "#656871";
+      ctx.font = "12px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Ahorro cliente", pad.left, height - 18);
+      ctx.save();
+      ctx.translate(18, pad.top + plotH / 2 + 45);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("Ganancia bruta", 0, 0);
+      ctx.restore();
+
+      results.forEach((item, index) => {
+        const x = pad.left + (item.customerSavings / maxSavings) * plotW;
+        const y = pad.top + plotH - ((item.profit - minProfit) / rangeProfit) * plotH;
+        const radius = 9 + Math.min(14, item.qty * 3);
+        ctx.fillStyle = item.profit < 0 ? "#b82f2f" : item.margin < .25 ? "#a45f00" : "#17803d";
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#171717";
+        ctx.font = "12px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(String(index + 1), x, y + 4);
+        ctx.fillStyle = "#656871";
+        ctx.fillText(item.name.replace(" camisa", ""), x, Math.max(16, y - radius - 8));
+      });
+    }
+
+    function drawWaterfall(canvasId, result) {
+      const canvas = byId(canvasId);
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      const items = [
+        { label: "Paga", value: result.totalPaid, kind: "positive" },
+        { label: "Producto", value: -result.variableCost, kind: "cost" },
+        { label: "Pedido/envio", value: -result.orderCost, kind: "cost" },
+        { label: "Pasarela", value: -result.paymentCost, kind: "cost" },
+        { label: "Pauta", value: -result.adCost, kind: "cost" },
+        { label: "Cambios", value: -result.returnCost, kind: "cost" },
+        { label: "Ganancia", value: result.profit, kind: result.profit < 0 ? "negative" : "positive" }
+      ];
+      const maxAbs = Math.max(1, ...items.map((item) => Math.abs(item.value)));
+      const pad = { left: 74, right: 20, top: 28, bottom: 44 };
+      const plotW = width - pad.left - pad.right;
+      const slot = plotW / items.length;
+      const baseY = height - pad.bottom;
+      const maxH = height - pad.top - pad.bottom;
+
+      ctx.strokeStyle = "#d9d6ce";
+      ctx.beginPath();
+      ctx.moveTo(pad.left, baseY);
+      ctx.lineTo(width - pad.right, baseY);
+      ctx.stroke();
+
+      items.forEach((item, index) => {
+        const barW = Math.max(34, slot * .62);
+        const x = pad.left + slot * index + (slot - barW) / 2;
+        const h = Math.max(3, Math.abs(item.value) / maxAbs * maxH);
+        const y = item.value >= 0 ? baseY - h : baseY - h;
+        ctx.fillStyle = item.kind === "negative" ? "#b82f2f" : item.kind === "cost" ? "#a45f00" : "#17803d";
+        ctx.fillRect(x, y, barW, h);
+        ctx.fillStyle = "#171717";
+        ctx.font = "12px system-ui";
+        ctx.textAlign = "center";
+        ctx.fillText(compactMoney(item.value), x + barW / 2, Math.max(14, y - 8));
+        ctx.save();
+        ctx.translate(x + barW / 2, height - 12);
+        ctx.rotate(-Math.PI / 6);
+        ctx.fillStyle = "#656871";
+        ctx.fillText(item.label, 0, 0);
+        ctx.restore();
+      });
+
+      ctx.fillStyle = "#171717";
+      ctx.font = "13px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText("Escenario critico: " + result.name, pad.left, 18);
+    }
+
     function compactMoney(value) {
       const abs = Math.abs(value);
       if (abs >= 1000000) return "$" + Math.round(value / 1000000) + "M";
@@ -938,8 +1393,9 @@
       });
     }
 
-    function renderPresetCards() {
-      const box = byId("presetCards");
+    function renderPresetCards(targetId = "presetCards") {
+      const box = byId(targetId);
+      if (!box) return;
       box.innerHTML = "";
       presets.forEach((preset) => {
         const card = document.createElement("article");
@@ -961,6 +1417,9 @@
       const avgMargin = avg(results, "margin");
       const avgSavings = avg(results, "customerSavings");
       const worst = results.reduce((loser, item) => item.margin < loser.margin ? item : loser, results[0]);
+      const avgPerShirt = avg(results, "profitPerShirt");
+      const avgShippingAbsorbed = avg(results, "shippingAbsorbed");
+      const avgPaid = avg(results, "totalPaid");
 
       byId("bestProfit").textContent = formatMoney(best.profit);
       byId("bestProfitHint").textContent = `${best.name}, ${best.qty} camisa(s)`;
@@ -969,6 +1428,16 @@
       byId("riskLabel").textContent = worst.margin < 0.2 ? "Revisar" : "OK";
       byId("riskLabel").className = "value " + (worst.margin < 0.2 ? "warn" : "good");
       byId("riskHint").textContent = `Menor margen: ${worst.name} (${pct.format(worst.margin)})`;
+      byId("focusProfit").textContent = formatMoney(best.profit);
+      byId("focusProfitHint").textContent = best.name;
+      byId("focusMinMargin").textContent = pct.format(worst.margin);
+      byId("focusMinMargin").className = worst.margin < .2 ? "warn" : "good";
+      byId("focusMinMarginHint").textContent = worst.name;
+      byId("focusPerShirt").textContent = formatMoney(avgPerShirt);
+      byId("focusSavings").textContent = formatMoney(avgSavings);
+      byId("focusShipping").textContent = formatMoney(avgShippingAbsorbed);
+      byId("focusPaid").textContent = formatMoney(avgPaid);
+      byId("decisionSummary").textContent = `Foco: mantener margen minimo sobre 20%, ganancia por camisa positiva y ahorro visible sin absorber demasiado envio. Regla activa: ${shippingPolicyLabel(state.shippingPolicy)}.`;
 
       byId("resultRows").innerHTML = results.map((item) => `
         <tr>
@@ -998,10 +1467,33 @@
       drawBars("savingsChart", labels, results.map((item) => item.customerSavings), { color: "#1d64d8" });
       drawBars("marginChart", labels, results.map((item) => item.margin), { color: "#0f766e", percent: true });
       drawStackedCost("costChart", results);
+      drawTradeoff("tradeoffChart", results);
+      drawWaterfall("waterfallChart", worst);
+      drawBars("perShirtChart", labels, results.map((item) => item.profitPerShirt), { color: "#17803d" });
+      drawBars("shippingExposureChart", labels, results.map((item) => item.shippingAbsorbed), { color: "#a45f00" });
+      syncQuickControls();
     }
 
     function render() {
       renderResults();
+    }
+
+    function shippingPolicyLabel(value) {
+      const labels = {
+        bogota_free_national_charge: "Bogota gratis, nacional cobrado",
+        always_charge: "cobrar envio siempre",
+        always_free: "envio gratis siempre",
+        free_over_threshold: "gratis desde monto minimo",
+        bogota_free_national_threshold: "Bogota gratis y nacional por umbral"
+      };
+      return labels[value] || value;
+    }
+
+    function syncQuickControls() {
+      document.querySelectorAll("[data-sync]").forEach((quick) => {
+        const source = byId(quick.dataset.sync);
+        if (source && quick.value !== source.value) quick.value = source.value;
+      });
     }
 
     function escapeHtml(value) {
@@ -1019,9 +1511,18 @@
         if (node) node.value = value;
       });
       renderPresetCards();
+      renderPresetCards("presetCardsCompact");
       renderScenarioInputs();
       document.querySelectorAll("#variables input, #variables select, #variables textarea").forEach((node) => {
         node.addEventListener("input", render);
+      });
+      document.querySelectorAll("[data-sync]").forEach((node) => {
+        node.addEventListener("input", () => {
+          const source = byId(node.dataset.sync);
+          if (!source) return;
+          source.value = node.value;
+          render();
+        });
       });
       byId("addScenario").addEventListener("click", () => {
         scenarios.push({ name: "Nueva compra", qty: 1, location: "bogota" });

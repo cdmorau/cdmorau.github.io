@@ -269,7 +269,7 @@
 
     .decision-lab {
       display: grid;
-      grid-template-columns: minmax(500px, 1fr) minmax(360px, .75fr) minmax(360px, .75fr);
+      grid-template-columns: minmax(760px, 1.25fr) minmax(460px, .75fr);
       gap: 14px;
       align-items: start;
     }
@@ -382,7 +382,7 @@
     }
 
     .decision-lab .chart-card:nth-child(1) {
-      grid-column: 2 / span 2;
+      grid-column: 2;
       grid-row: 1;
     }
 
@@ -397,8 +397,8 @@
     }
 
     .decision-lab .chart-card:nth-child(4) {
-      grid-column: 3;
-      grid-row: 2;
+      grid-column: 1 / span 2;
+      grid-row: 3;
     }
 
     .chart-card {
@@ -426,6 +426,22 @@
       display: grid;
       grid-template-columns: minmax(320px, 1.15fr) minmax(260px, .85fr);
       gap: 10px;
+    }
+
+    .decision-lab .tradeoff-viz {
+      grid-template-columns: minmax(300px, 1fr) minmax(180px, .52fr);
+    }
+
+    .decision-lab .tradeoff-viz .viz-list {
+      grid-template-columns: 1fr;
+    }
+
+    .decision-lab .tradeoff-viz .viz-row {
+      padding: 7px;
+    }
+
+    .decision-lab .tradeoff-viz .viz-row .amount {
+      font-size: 13px;
     }
 
     .tradeoff-map {
@@ -745,6 +761,15 @@
       align-content: start;
     }
 
+    .preset.active {
+      border-color: rgba(23, 128, 61, .55);
+      box-shadow: 0 0 0 2px rgba(23, 128, 61, .10);
+    }
+
+    .preset.active .btn {
+      background: var(--green);
+    }
+
     .preset strong {
       font-size: 16px;
     }
@@ -753,6 +778,13 @@
       margin: 0;
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .preset-feedback {
+      margin: 0;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .pill {
@@ -1050,8 +1082,8 @@
 
   <nav class="nav" aria-label="Secciones">
     <div class="shell">
-      <a href="#analisis">Analisis</a>
       <a href="#tablero">Tablero</a>
+      <a href="#analisis">Analisis</a>
       <a href="#decisiones">Decisiones</a>
       <a href="#variables">Variables</a>
       <a href="#escenarios">Escenarios</a>
@@ -1062,36 +1094,6 @@
   </nav>
 
   <main class="shell">
-    <section id="analisis" class="exec-grid" aria-label="Analisis ejecutivo">
-      <article class="card exec-card">
-        <div class="exec-title">
-          <h2>Decision ejecutiva</h2>
-          <button class="info-btn" type="button" data-info="Resume la recomendacion comercial usando los escenarios actuales, los margenes y la exposicion por envio.">i</button>
-        </div>
-        <div class="recommendation">
-          <strong id="recommendationTitle">Calculando recomendacion</strong>
-          <p id="recommendationText">Ajusta las variables para ver el criterio sugerido.</p>
-        </div>
-        <ul class="action-list" id="actionList"></ul>
-      </article>
-
-      <article class="card exec-card">
-        <div class="exec-title">
-          <h3>Sensibilidad de decision</h3>
-          <button class="info-btn" type="button" data-info="Pruebas rapidas tipo spreadsheet: cambian una variable critica a la vez para ver si el modelo aguanta.">i</button>
-        </div>
-        <div class="sensitivity-list" id="sensitivityList"></div>
-      </article>
-
-      <article class="card exec-card">
-        <div class="exec-title">
-          <h3>Checks del modelo</h3>
-          <button class="info-btn" type="button" data-info="Controles de salud: margen minimo, precio de equilibrio, envio absorbido y fuente pendiente de validacion.">i</button>
-        </div>
-        <div class="check-list" id="modelChecks"></div>
-      </article>
-    </section>
-
     <section id="tablero" class="decision-lab" aria-label="Tablero de decision">
       <article class="card lab-panel">
         <div>
@@ -1165,6 +1167,7 @@
         </div>
 
         <div class="compact-presets" id="presetCardsCompact"></div>
+        <p class="preset-feedback" data-preset-feedback>Preset activo: Base recomendada.</p>
       </article>
 
       <article class="lab-panel">
@@ -1186,6 +1189,36 @@
             <div class="viz" id="shippingExposureViz"></div>
           </div>
         </div>
+      </article>
+    </section>
+
+    <section id="analisis" class="exec-grid" aria-label="Analisis ejecutivo">
+      <article class="card exec-card">
+        <div class="exec-title">
+          <h2>Lectura del modelo</h2>
+          <button class="info-btn" type="button" data-info="Resume la recomendacion comercial usando los escenarios actuales, los margenes y la exposicion por envio.">i</button>
+        </div>
+        <div class="recommendation">
+          <strong id="recommendationTitle">Calculando recomendacion</strong>
+          <p id="recommendationText">Ajusta las variables para ver el criterio sugerido.</p>
+        </div>
+        <ul class="action-list" id="actionList"></ul>
+      </article>
+
+      <article class="card exec-card">
+        <div class="exec-title">
+          <h3>Que pasa si cambias algo</h3>
+          <button class="info-btn" type="button" data-info="Pruebas rapidas tipo spreadsheet: cambian una variable critica a la vez para ver si el modelo aguanta.">i</button>
+        </div>
+        <div class="sensitivity-list" id="sensitivityList"></div>
+      </article>
+
+      <article class="card exec-card">
+        <div class="exec-title">
+          <h3>Checks del modelo</h3>
+          <button class="info-btn" type="button" data-info="Controles de salud: margen minimo, precio de equilibrio, envio absorbido y fuente pendiente de validacion.">i</button>
+        </div>
+        <div class="check-list" id="modelChecks"></div>
       </article>
     </section>
 
@@ -1215,7 +1248,7 @@
     <section id="decisiones">
       <h2>Decisiones principales</h2>
       <div class="grid cols-4" id="presetCards"></div>
-      <p class="note">Los presets cambian varias variables a la vez. Despues puedes ajustar cualquier campo manualmente.</p>
+      <p class="note" data-preset-feedback>Preset activo: Base recomendada. Los presets cambian varias variables a la vez; despues puedes ajustar cualquier campo manualmente.</p>
     </section>
 
     <section id="variables">
@@ -1480,6 +1513,7 @@
     ];
 
     let scenarios = JSON.parse(JSON.stringify(defaultScenarios));
+    let activePresetName = "Base recomendada";
 
     function byId(id) {
       return document.getElementById(id);
@@ -1499,13 +1533,32 @@
       return state;
     }
 
-    function setState(values) {
+    function setState(values, presetName = null) {
       Object.entries(values).forEach(([key, value]) => {
         const node = byId(key);
         if (!node) return;
         node.value = value;
       });
+      if (presetName) activePresetName = presetName;
+      renderPresetCards();
+      renderPresetCards("presetCardsCompact");
       render();
+    }
+
+    function markCustomChange() {
+      activePresetName = "Personalizado";
+      renderPresetCards();
+      renderPresetCards("presetCardsCompact");
+      render();
+    }
+
+    function updatePresetFeedback() {
+      const text = activePresetName === "Personalizado"
+        ? "Ajuste personalizado activo. Los presets siguen disponibles para volver a una estrategia completa."
+        : `Preset activo: ${activePresetName}. Los campos de precio, cupon, envio y combos ya fueron actualizados.`;
+      document.querySelectorAll("[data-preset-feedback]").forEach((node) => {
+        node.textContent = text;
+      });
     }
 
     function formatMoney(value) {
@@ -1979,18 +2032,18 @@
       byId("recommendationTitle").textContent = recTitle;
       byId("recommendationText").textContent = recText;
       byId("actionList").innerHTML = [
-        `Mantener precio de referencia en ${formatMoney(state.price)} mientras el margen minimo siga sobre 20%.`,
-        `Validar en Mastershop si el flete real se sostiene cerca de ${formatMoney(state.shippingNationalCost)}; si sube, revisar envio nacional.`,
-        `Usar la matriz ahorro/ganancia para elegir promociones: el escenario ganador hoy es ${best.name} con ${formatMoney(best.profit)} de ganancia.`,
-        `No activar envio gratis nacional sin umbral si el margen minimo baja de 20%.`
+        `Decision principal: ${minMargin >= .2 ? "puedes probar ventas con esta regla" : "ajusta antes de vender"} porque el peor margen es ${pct.format(minMargin)} en ${worst.name}.`,
+        `Precio actual: ${formatMoney(state.price)}. Si quieres mantener cupon de ${state.couponPct}%, no bajes precio mientras el margen minimo este bajo 20%.`,
+        `Envio: deja ${formatMoney(state.shippingNationalCost)} como costo temporal y valida la tarifa real en Mastershop por ciudad, peso y transportadora.`,
+        `Mejor escenario actual: ${best.name}, con ${formatMoney(best.profit)} de ganancia bruta.`
       ].map((item) => `<li>${item}</li>`).join("");
 
       const sensitivity = [
-        { label: "Precio -$5.000", hint: "estres de precio", results: scenarioSet({ price: Math.max(0, state.price - 5000) }) },
-        { label: "Cupon 15%", hint: "promocion agresiva", results: scenarioSet({ couponPct: 15 }) },
-        { label: "Envio gratis siempre", hint: "maximo ahorro cliente", results: scenarioSet({ shippingPolicy: "always_free" }) },
-        { label: "Envio real $12.000", hint: "flete Mastershop sube", results: scenarioSet({ shippingBogotaCost: 12000, shippingNationalCost: 12000 }) },
-        { label: "Sin cupon", hint: "margen puro", results: scenarioSet({ couponPct: 0, couponMode: "none" }) }
+        { label: `Bajar precio a ${formatMoney(Math.max(0, state.price - 5000))}`, hint: "prueba si una promo de precio aguanta", results: scenarioSet({ price: Math.max(0, state.price - 5000) }) },
+        { label: "Subir cupon a 15%", hint: "prueba una promocion mas agresiva", results: scenarioSet({ couponPct: 15 }) },
+        { label: "Envio gratis siempre", hint: "mide el maximo ahorro para cliente", results: scenarioSet({ shippingPolicy: "always_free" }) },
+        { label: "Envio real sube a $12.000", hint: "simula una tarifa Mastershop mas alta", results: scenarioSet({ shippingBogotaCost: 12000, shippingNationalCost: 12000 }) },
+        { label: "Quitar cupon", hint: "mide el margen sin descuento permanente", results: scenarioSet({ couponPct: 0, couponMode: "none" }) }
       ];
 
       byId("sensitivityList").innerHTML = sensitivity.map((item) => {
@@ -2000,7 +2053,7 @@
           <div class="sensitivity-row">
             <div>
               <strong>${item.label}</strong>
-              <span>${item.hint} · peor: ${localWorst.name} · mejor: ${formatMoney(localBest.profit)}</span>
+              <span>${item.hint}. Peor caso: ${localWorst.name} (${pct.format(localWorst.margin)}). Mejor ganancia: ${localBest.name} ${formatMoney(localBest.profit)}.</span>
             </div>
             <span class="status-chip ${toneForMargin(localWorst.margin)}">${pct.format(localWorst.margin)}</span>
           </div>
@@ -2072,6 +2125,9 @@
         node.addEventListener("input", () => {
           const item = scenarios[Number(node.dataset.scenario)];
           item[node.dataset.field] = node.dataset.field === "qty" ? Number(node.value || 1) : node.value;
+          activePresetName = "Personalizado";
+          renderPresetCards();
+          renderPresetCards("presetCardsCompact");
           render();
         });
       });
@@ -2083,14 +2139,14 @@
       box.innerHTML = "";
       presets.forEach((preset) => {
         const card = document.createElement("article");
-        card.className = "card preset";
+        card.className = `card preset${preset.name === activePresetName ? " active" : ""}`;
         card.innerHTML = `
           <span class="pill">${preset.tag}</span>
           <strong class="with-info">${preset.name} <button class="info-btn" type="button" data-info="${escapeHtml(preset.description)}">i</button></strong>
           <p>${preset.description}</p>
-          <button class="btn tiny" type="button">Aplicar</button>
+          <button class="btn tiny apply-preset" type="button">${preset.name === activePresetName ? "Aplicado" : "Aplicar"}</button>
         `;
-        card.querySelector("button").addEventListener("click", () => setState(preset.values));
+        card.querySelector(".apply-preset").addEventListener("click", () => setState(preset.values, preset.name));
         box.appendChild(card);
       });
     }
@@ -2168,6 +2224,7 @@
       });
       renderCostBreakdownViz(results);
       syncQuickControls();
+      updatePresetFeedback();
     }
 
     function render() {
@@ -2210,24 +2267,28 @@
       renderPresetCards("presetCardsCompact");
       renderScenarioInputs();
       document.querySelectorAll("#variables input, #variables select, #variables textarea").forEach((node) => {
-        node.addEventListener("input", render);
+        node.addEventListener("input", markCustomChange);
       });
       document.querySelectorAll("[data-sync]").forEach((node) => {
         node.addEventListener("input", () => {
           const source = byId(node.dataset.sync);
           if (!source) return;
           source.value = node.value;
-          render();
+          markCustomChange();
         });
       });
       byId("addScenario").addEventListener("click", () => {
         scenarios.push({ name: "Nueva compra", qty: 1, location: "bogota" });
+        activePresetName = "Personalizado";
         renderScenarioInputs();
         render();
       });
       byId("resetScenarios").addEventListener("click", () => {
         scenarios = JSON.parse(JSON.stringify(defaultScenarios));
+        activePresetName = "Base recomendada";
         renderScenarioInputs();
+        renderPresetCards();
+        renderPresetCards("presetCardsCompact");
         render();
       });
       render();

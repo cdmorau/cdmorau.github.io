@@ -138,9 +138,19 @@
 
     .decision-lab {
       display: grid;
-      grid-template-columns: minmax(480px, .82fr) minmax(720px, 1.18fr);
+      grid-template-columns: minmax(500px, 1.1fr) minmax(360px, .85fr) minmax(360px, .85fr);
       gap: 14px;
       align-items: start;
+    }
+
+    .decision-lab > .card.lab-panel {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .decision-lab > .lab-panel:not(.card),
+    .decision-lab > .lab-panel:not(.card) .chart-grid-tight {
+      display: contents;
     }
 
     .lab-panel {
@@ -238,6 +248,26 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
       align-items: start;
+    }
+
+    .decision-lab .chart-card:nth-child(1) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .decision-lab .chart-card:nth-child(2) {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    .decision-lab .chart-card:nth-child(3) {
+      grid-column: 1 / span 2;
+      grid-row: 2;
+    }
+
+    .decision-lab .chart-card:nth-child(4) {
+      grid-column: 3;
+      grid-row: 2;
     }
 
     .chart-card {
@@ -708,6 +738,21 @@
 
       .focus-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .decision-lab > .lab-panel:not(.card),
+      .decision-lab > .lab-panel:not(.card) .chart-grid-tight {
+        display: grid;
+        gap: 10px;
+      }
+
+      .decision-lab > .card.lab-panel,
+      .decision-lab .chart-card:nth-child(1),
+      .decision-lab .chart-card:nth-child(2),
+      .decision-lab .chart-card:nth-child(3),
+      .decision-lab .chart-card:nth-child(4) {
+        grid-column: auto;
+        grid-row: auto;
       }
 
       .scenario-row,

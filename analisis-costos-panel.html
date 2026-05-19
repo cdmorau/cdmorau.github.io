@@ -136,9 +136,140 @@
     .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid.cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 
+    .exec-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr .85fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .exec-card {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .exec-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .exec-title h2,
+    .exec-title h3 {
+      margin: 0;
+    }
+
+    .recommendation {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #cfe7d4;
+      border-radius: 8px;
+      background: #f2f8f3;
+    }
+
+    .recommendation strong {
+      color: var(--green);
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .recommendation p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .action-list li {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 8px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .action-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .sensitivity-list,
+    .check-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sensitivity-row,
+    .check-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .sensitivity-row strong,
+    .check-row strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .sensitivity-row span,
+    .check-row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 78px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: #eef6ff;
+      color: #174ea6;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .status-chip.good-bg {
+      background: #eaf6ed;
+      color: var(--green);
+    }
+
+    .status-chip.warn-bg {
+      background: #fff6e7;
+      color: var(--amber);
+    }
+
+    .status-chip.bad-bg {
+      background: #fff1f1;
+      color: var(--red);
+    }
+
     .decision-lab {
       display: grid;
-      grid-template-columns: minmax(500px, 1.1fr) minmax(360px, .85fr) minmax(360px, .85fr);
+      grid-template-columns: minmax(500px, 1fr) minmax(360px, .75fr) minmax(360px, .75fr);
       gap: 14px;
       align-items: start;
     }
@@ -251,17 +382,17 @@
     }
 
     .decision-lab .chart-card:nth-child(1) {
-      grid-column: 2;
+      grid-column: 2 / span 2;
       grid-row: 1;
     }
 
     .decision-lab .chart-card:nth-child(2) {
-      grid-column: 3;
-      grid-row: 1;
+      grid-column: 1;
+      grid-row: 2;
     }
 
     .decision-lab .chart-card:nth-child(3) {
-      grid-column: 1 / span 2;
+      grid-column: 2;
       grid-row: 2;
     }
 
@@ -293,13 +424,13 @@
 
     .tradeoff-viz {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(320px, 1.15fr) minmax(260px, .85fr);
       gap: 10px;
     }
 
     .tradeoff-map {
       position: relative;
-      min-height: 160px;
+      min-height: 260px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background:
@@ -729,6 +860,7 @@
       .grid.cols-4,
       .grid.cols-2,
       .grid.cols-6,
+      .exec-grid,
       .decision-lab,
       .quick-controls,
       .compact-presets,
@@ -918,6 +1050,7 @@
 
   <nav class="nav" aria-label="Secciones">
     <div class="shell">
+      <a href="#analisis">Analisis</a>
       <a href="#tablero">Tablero</a>
       <a href="#decisiones">Decisiones</a>
       <a href="#variables">Variables</a>
@@ -929,6 +1062,36 @@
   </nav>
 
   <main class="shell">
+    <section id="analisis" class="exec-grid" aria-label="Analisis ejecutivo">
+      <article class="card exec-card">
+        <div class="exec-title">
+          <h2>Decision ejecutiva</h2>
+          <button class="info-btn" type="button" data-info="Resume la recomendacion comercial usando los escenarios actuales, los margenes y la exposicion por envio.">i</button>
+        </div>
+        <div class="recommendation">
+          <strong id="recommendationTitle">Calculando recomendacion</strong>
+          <p id="recommendationText">Ajusta las variables para ver el criterio sugerido.</p>
+        </div>
+        <ul class="action-list" id="actionList"></ul>
+      </article>
+
+      <article class="card exec-card">
+        <div class="exec-title">
+          <h3>Sensibilidad de decision</h3>
+          <button class="info-btn" type="button" data-info="Pruebas rapidas tipo spreadsheet: cambian una variable critica a la vez para ver si el modelo aguanta.">i</button>
+        </div>
+        <div class="sensitivity-list" id="sensitivityList"></div>
+      </article>
+
+      <article class="card exec-card">
+        <div class="exec-title">
+          <h3>Checks del modelo</h3>
+          <button class="info-btn" type="button" data-info="Controles de salud: margen minimo, precio de equilibrio, envio absorbido y fuente pendiente de validacion.">i</button>
+        </div>
+        <div class="check-list" id="modelChecks"></div>
+      </article>
+    </section>
+
     <section id="tablero" class="decision-lab" aria-label="Tablero de decision">
       <article class="card lab-panel">
         <div>
@@ -1286,7 +1449,7 @@
       freeShippingThreshold: 180000,
       sourceCosts: "Analisis de costos previo PANEL mayo 2025: camisa base $25.000, DTF + pegado $13.000, bolsa $200, tag $400, envio $8.000, operacion $3.000, publicidad $7.200 por unidad y plataforma 3,5%.",
       sourcePricing: "Precio default temporal: $80.000 por camisa. El analisis previo calcula comision de plataforma sobre ese precio y deja una base para probar margen con cupon del 10%.",
-      sourceShipping: "Analisis previo usa envio nacional estimado en $8.000 con Servientrega / Interrapidisimo. Se deja igual para Bogota y nacional hasta validar tarifa real por ciudad."
+      sourceShipping: "Default operativo temporal: $8.000 para Bogota y nacional, por solicitud de decision. Referencia: Mastershop indica que gestiona envios con aliados logisticos y cobertura nacional, pero no publica tarifa fija por ciudad; el flete debe validarse en Mastershop por destino, peso y transportadora antes de activar."
     };
 
     const presets = [
@@ -1769,6 +1932,117 @@
       return results.reduce((sum, item) => sum + item[key], 0) / Math.max(1, results.length);
     }
 
+    function scenarioSet(stateOverride = {}) {
+      const nextState = { ...getState(), ...stateOverride };
+      return scenarios.map((scenario) => scenarioResult(nextState, scenario));
+    }
+
+    function minBy(items, key) {
+      return items.reduce((winner, item) => item[key] < winner[key] ? item : winner, items[0]);
+    }
+
+    function maxBy(items, key) {
+      return items.reduce((winner, item) => item[key] > winner[key] ? item : winner, items[0]);
+    }
+
+    function toneForMargin(margin) {
+      if (margin < .2) return "bad-bg";
+      if (margin < .25) return "warn-bg";
+      return "good-bg";
+    }
+
+    function breakEvenPrice(state, scenario) {
+      let low = 0;
+      let high = Math.max(200000, state.price * 3);
+      for (let i = 0; i < 32; i += 1) {
+        const mid = (low + high) / 2;
+        const result = scenarioResult({ ...state, price: mid }, scenario);
+        if (result.profit >= 0) high = mid;
+        else low = mid;
+      }
+      return high;
+    }
+
+    function renderExecutive(state, results, best, worst) {
+      const minMargin = worst.margin;
+      const avgShippingAbsorbed = avg(results, "shippingAbsorbed");
+      const breakeven = breakEvenPrice(state, scenarios[0]);
+      const recTitle = minMargin >= .25
+        ? "Modelo viable con la regla actual"
+        : minMargin >= .2
+          ? "Viable, pero con margen estrecho"
+          : "Revisar precio, cupon o envio";
+      const recText = minMargin >= .2
+        ? `Con precio ${formatMoney(state.price)}, cupon ${state.couponPct}% y ${shippingPolicyLabel(state.shippingPolicy)}, el peor margen es ${pct.format(minMargin)} en ${worst.name}.`
+        : `El peor margen cae a ${pct.format(minMargin)} en ${worst.name}. Antes de vender, sube precio, reduce descuento o cobra mas envio.`;
+
+      byId("recommendationTitle").textContent = recTitle;
+      byId("recommendationText").textContent = recText;
+      byId("actionList").innerHTML = [
+        `Mantener precio de referencia en ${formatMoney(state.price)} mientras el margen minimo siga sobre 20%.`,
+        `Validar en Mastershop si el flete real se sostiene cerca de ${formatMoney(state.shippingNationalCost)}; si sube, revisar envio nacional.`,
+        `Usar la matriz ahorro/ganancia para elegir promociones: el escenario ganador hoy es ${best.name} con ${formatMoney(best.profit)} de ganancia.`,
+        `No activar envio gratis nacional sin umbral si el margen minimo baja de 20%.`
+      ].map((item) => `<li>${item}</li>`).join("");
+
+      const sensitivity = [
+        { label: "Precio -$5.000", hint: "estres de precio", results: scenarioSet({ price: Math.max(0, state.price - 5000) }) },
+        { label: "Cupon 15%", hint: "promocion agresiva", results: scenarioSet({ couponPct: 15 }) },
+        { label: "Envio gratis siempre", hint: "maximo ahorro cliente", results: scenarioSet({ shippingPolicy: "always_free" }) },
+        { label: "Envio real $12.000", hint: "flete Mastershop sube", results: scenarioSet({ shippingBogotaCost: 12000, shippingNationalCost: 12000 }) },
+        { label: "Sin cupon", hint: "margen puro", results: scenarioSet({ couponPct: 0, couponMode: "none" }) }
+      ];
+
+      byId("sensitivityList").innerHTML = sensitivity.map((item) => {
+        const localWorst = minBy(item.results, "margin");
+        const localBest = maxBy(item.results, "profit");
+        return `
+          <div class="sensitivity-row">
+            <div>
+              <strong>${item.label}</strong>
+              <span>${item.hint} · peor: ${localWorst.name} · mejor: ${formatMoney(localBest.profit)}</span>
+            </div>
+            <span class="status-chip ${toneForMargin(localWorst.margin)}">${pct.format(localWorst.margin)}</span>
+          </div>
+        `;
+      }).join("");
+
+      byId("modelChecks").innerHTML = [
+        {
+          label: "Margen minimo",
+          hint: `${worst.name} queda en ${pct.format(minMargin)}`,
+          value: minMargin >= .2 ? "OK" : "Riesgo",
+          tone: toneForMargin(minMargin)
+        },
+        {
+          label: "Precio equilibrio",
+          hint: `1 camisa Bogota cubre costos desde ${formatMoney(breakeven)}`,
+          value: formatMoney(breakeven),
+          tone: breakeven <= state.price ? "good-bg" : "bad-bg"
+        },
+        {
+          label: "Envio absorbido",
+          hint: `Promedio asumido por PANEL: ${formatMoney(avgShippingAbsorbed)}`,
+          value: avgShippingAbsorbed <= 5000 ? "Controlado" : "Alto",
+          tone: avgShippingAbsorbed <= 5000 ? "good-bg" : "warn-bg"
+        },
+        {
+          label: "Fuente envio",
+          hint: "Mastershop debe confirmar tarifa real por destino y peso",
+          value: "Pendiente",
+          tone: "warn-bg"
+        }
+      ].map((item) => `
+        <div class="check-row">
+          <div>
+            <strong>${item.label}</strong>
+            <span>${item.hint}</span>
+          </div>
+          <span class="status-chip ${item.tone}">${item.value}</span>
+        </div>
+      `).join("");
+    }
+
     function renderScenarioInputs() {
       const box = byId("scenarioInputs");
       box.innerHTML = "";
@@ -1830,6 +2104,7 @@
       const avgPerShirt = avg(results, "profitPerShirt");
       const avgShippingAbsorbed = avg(results, "shippingAbsorbed");
       const avgPaid = avg(results, "totalPaid");
+      renderExecutive(state, results, best, worst);
 
       byId("bestProfit").textContent = formatMoney(best.profit);
       byId("bestProfitHint").textContent = `${best.name}, ${best.qty} camisa(s)`;

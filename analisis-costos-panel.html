@@ -38,20 +38,20 @@
     }
 
     .shell {
-      width: min(1240px, calc(100% - 28px));
+      width: min(1520px, calc(100% - 16px));
       margin: 0 auto;
     }
 
     .hero {
       background: linear-gradient(135deg, #111827 0%, #18314f 54%, #0f766e 100%);
       color: #fff;
-      padding: 18px 0 16px;
+      padding: 10px 0 9px;
     }
 
     .hero h1 {
-      margin: 8px 0 8px;
-      max-width: 920px;
-      font-size: clamp(26px, 3.4vw, 44px);
+      margin: 5px 0 5px;
+      max-width: 1100px;
+      font-size: clamp(24px, 2.9vw, 38px);
       line-height: 1;
       letter-spacing: 0;
     }
@@ -60,7 +60,7 @@
       margin: 0;
       max-width: 900px;
       color: rgba(255,255,255,.82);
-      font-size: 15px;
+      font-size: 13px;
     }
 
     .brand {
@@ -75,8 +75,8 @@
     .mark {
       display: grid;
       place-items: center;
-      width: 38px;
-      height: 38px;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
       background: #fff;
       color: #111827;
@@ -95,7 +95,7 @@
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 10px 0;
+      padding: 8px 0;
     }
 
     .nav a {
@@ -110,7 +110,7 @@
       font-weight: 700;
     }
 
-    main { padding: 14px 0 46px; }
+    main { padding: 10px 0 46px; }
 
     section { margin-top: 16px; }
 
@@ -188,7 +188,7 @@
 
     .quick-controls {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: .85fr .85fr .85fr .7fr 1.45fr .85fr;
       gap: 8px;
       align-items: end;
     }
@@ -203,6 +203,11 @@
       min-height: 36px;
       padding: 7px 8px;
       font-size: 13px;
+    }
+
+    .quick-controls select {
+      font-size: 12px;
+      padding-right: 26px;
     }
 
     .quick-controls label {
@@ -454,6 +459,20 @@
       border: 1px solid var(--line);
       border-radius: 6px;
       padding: 9px 10px;
+    }
+
+    select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 16px) 50%,
+        calc(100% - 11px) 50%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      min-width: 0;
+      padding-right: 28px;
     }
 
     textarea {
@@ -1137,28 +1156,28 @@
     ];
 
     const defaults = {
-      costShirt: 28000,
-      costPrint: 12000,
-      costPackage: 3500,
-      costOps: 2500,
-      paymentFee: 3.2,
-      paymentFixed: 900,
-      adProvision: 6,
-      returnProvision: 2,
-      price: 75000,
+      costShirt: 25000,
+      costPrint: 13000,
+      costPackage: 600,
+      costOps: 3000,
+      paymentFee: 3.5,
+      paymentFixed: 0,
+      adProvision: 9,
+      returnProvision: 0,
+      price: 80000,
       couponPct: 10,
       couponMode: "products",
       bundle2Discount: 0,
       bundle3Discount: 4,
       shippingPolicy: "bogota_free_national_charge",
-      shippingBogotaCost: 9000,
-      shippingNationalCost: 15000,
-      shippingBogotaCharge: 9000,
-      shippingNationalCharge: 15000,
+      shippingBogotaCost: 8000,
+      shippingNationalCost: 8000,
+      shippingBogotaCharge: 8000,
+      shippingNationalCharge: 8000,
       freeShippingThreshold: 180000,
-      sourceCosts: "Camiseta + estampado: estimacion interna de produccion local. Empaque y operacion: provision por pedido para bolsa, etiqueta, alistamiento y contingencias.",
-      sourcePricing: "Precio base pensado para venta directa DTC y margen suficiente para absorber cupon del 10%, pasarela y parte de pauta.",
-      sourceShipping: "Estimacion basada en rangos publicos de transportadoras/cotizadores para paquetes livianos en Colombia. Validar contra Coordinadora, Servientrega, Interrapidisimo, Envia o el agregador elegido."
+      sourceCosts: "Analisis de costos previo PANEL mayo 2025: camisa base $25.000, DTF + pegado $13.000, bolsa $200, tag $400, envio $8.000, operacion $3.000, publicidad $7.200 por unidad y plataforma 3,5%.",
+      sourcePricing: "Precio default temporal: $80.000 por camisa. El analisis previo calcula comision de plataforma sobre ese precio y deja una base para probar margen con cupon del 10%.",
+      sourceShipping: "Analisis previo usa envio nacional estimado en $8.000 con Servientrega / Interrapidisimo. Se deja igual para Bogota y nacional hasta validar tarifa real por ciudad."
     };
 
     const presets = [
@@ -1166,25 +1185,25 @@
         name: "Base recomendada",
         tag: "balance",
         description: "Bogota gratis, nacional cobrado, cupon 10% sobre productos. Mantiene margen y da una oferta simple.",
-        values: { price: 75000, couponMode: "products", couponPct: 10, shippingPolicy: "bogota_free_national_charge", freeShippingThreshold: 180000, bundle3Discount: 4 }
+        values: { price: 80000, couponMode: "products", couponPct: 10, shippingPolicy: "bogota_free_national_charge", freeShippingThreshold: 180000, bundle3Discount: 4 }
       },
       {
         name: "Crecimiento",
         tag: "mas ventas",
         description: "Bogota gratis y nacional gratis desde monto alto. Mejora combos, exige cuidar margen.",
-        values: { price: 78000, couponMode: "products", couponPct: 10, shippingPolicy: "bogota_free_national_threshold", freeShippingThreshold: 180000, bundle3Discount: 5 }
+        values: { price: 80000, couponMode: "products", couponPct: 10, shippingPolicy: "bogota_free_national_threshold", freeShippingThreshold: 180000, bundle3Discount: 5 }
       },
       {
         name: "Conservador",
         tag: "margen",
         description: "Cobra envio siempre y evita descuento por combo. Sirve si el costo real sube.",
-        values: { price: 75000, couponMode: "products", couponPct: 10, shippingPolicy: "always_charge", bundle2Discount: 0, bundle3Discount: 0 }
+        values: { price: 80000, couponMode: "products", couponPct: 10, shippingPolicy: "always_charge", bundle2Discount: 0, bundle3Discount: 0 }
       },
       {
         name: "Oferta agresiva",
         tag: "cliente",
         description: "Envio gratis siempre y cupon al total. Solo viable si la produccion baja o el precio sube.",
-        values: { price: 82000, couponMode: "total", couponPct: 10, shippingPolicy: "always_free", bundle3Discount: 5 }
+        values: { price: 80000, couponMode: "total", couponPct: 10, shippingPolicy: "always_free", bundle3Discount: 5 }
       }
     ];
 

@@ -329,7 +329,7 @@
 
     .quick-controls {
       display: grid;
-      grid-template-columns: .75fr .75fr .75fr .6fr 1fr 1.2fr .75fr;
+      grid-template-columns: .7fr .7fr .7fr .55fr .95fr 1fr 1fr .7fr;
       gap: 8px;
       align-items: end;
     }
@@ -1229,6 +1229,10 @@
             <select id="qDestinationCity" data-sync="destinationCity"></select>
           </div>
           <div class="control">
+            <label class="with-info" for="qShippingCarrier">Transportadora <button class="info-btn" type="button" data-info="Transportadora Mastershop usada para la tarifa nacional. Mas economica toma la menor tarifa disponible de la ciudad.">i</button></label>
+            <select id="qShippingCarrier" data-sync="shippingCarrier"></select>
+          </div>
+          <div class="control">
             <label class="with-info" for="qFreeShippingThreshold">Umbral <button class="info-btn" type="button" data-info="Monto minimo de compra para activar envio gratis cuando la regla usa umbral.">i</button></label>
             <input id="qFreeShippingThreshold" data-sync="freeShippingThreshold" type="number" min="0" step="1000">
           </div>
@@ -1423,6 +1427,10 @@
             <label class="with-info" for="destinationCity">Ciudad nacional simulada <button class="info-btn" type="button" data-info="Selecciona una ciudad para cargar una tarifa estimada de envio nacional. Luego puedes reemplazar el valor por la tarifa real de Mastershop.">i</button></label>
             <select id="destinationCity"></select>
           </div>
+          <div class="control">
+            <label class="with-info" for="shippingCarrier">Transportadora Mastershop <button class="info-btn" type="button" data-info="Puedes fijar una transportadora o usar la tarifa mas economica disponible para cada ciudad.">i</button></label>
+            <select id="shippingCarrier"></select>
+          </div>
           <div class="shipping-city-summary" id="shippingCitySummary"></div>
           <div class="rate-grid" id="shippingRateGrid"></div>
           <div class="row">
@@ -1535,22 +1543,40 @@
       { name: "3 camisas nacional", qty: 3, location: "national" }
     ];
 
+    const shippingCarriers = [
+      { key: "auto", label: "Mas economica" },
+      { key: "swayp", label: "Swayp" },
+      { key: "interrapidisimo", label: "InterRapidísimo" },
+      { key: "coordinadora", label: "Coordinadora" },
+      { key: "envia", label: "Envía" },
+      { key: "tcc", label: "TCC" }
+    ];
+
     const cityShippingRates = [
-      { key: "bogota", city: "Bogota", cost: 8000, charge: 8000, source: "Urbano liviano" },
-      { key: "soacha", city: "Soacha", cost: 8500, charge: 8500, source: "Cercano a Bogota" },
-      { key: "medellin", city: "Medellin", cost: 10000, charge: 10000, source: "Capital principal" },
-      { key: "cali", city: "Cali", cost: 11000, charge: 11000, source: "Capital principal" },
-      { key: "barranquilla", city: "Barranquilla", cost: 12000, charge: 12000, source: "Costa principal" },
-      { key: "cartagena", city: "Cartagena", cost: 12500, charge: 12500, source: "Costa principal" },
-      { key: "bucaramanga", city: "Bucaramanga", cost: 11000, charge: 11000, source: "Capital principal" },
-      { key: "pereira", city: "Pereira", cost: 10500, charge: 10500, source: "Eje cafetero" },
-      { key: "manizales", city: "Manizales", cost: 11000, charge: 11000, source: "Eje cafetero" },
-      { key: "ibague", city: "Ibague", cost: 10500, charge: 10500, source: "Capital cercana" },
-      { key: "villavicencio", city: "Villavicencio", cost: 11000, charge: 11000, source: "Capital cercana" },
-      { key: "cucuta", city: "Cucuta", cost: 13000, charge: 13000, source: "Ruta nacional" },
-      { key: "santa_marta", city: "Santa Marta", cost: 12500, charge: 12500, source: "Costa principal" },
-      { key: "monteria", city: "Monteria", cost: 13000, charge: 13000, source: "Ruta nacional" },
-      { key: "pasto", city: "Pasto", cost: 14500, charge: 14500, source: "Ruta larga" }
+      { key: "bogota", city: "Bogota", department: "Cundinamarca", rates: { swayp: 16500, interrapidisimo: 13650, coordinadora: 14718, envia: 15220, tcc: 19439 } },
+      { key: "medellin", city: "Medellin", department: "Antioquia", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "cali", city: "Cali", department: "Valle del Cauca", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "barranquilla", city: "Barranquilla", department: "Atlantico", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "cartagena", city: "Cartagena", department: "Bolivar", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "cucuta", city: "Cucuta", department: "Norte de Santander", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "bucaramanga", city: "Bucaramanga", department: "Santander", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "pereira", city: "Pereira", department: "Risaralda", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "manizales", city: "Manizales", department: "Caldas", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "ibague", city: "Ibague", department: "Tolima", rates: { interrapidisimo: 15190, coordinadora: 20754, envia: 17400, tcc: 20680 } },
+      { key: "santa_marta", city: "Santa Marta", department: "Magdalena", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "villavicencio", city: "Villavicencio", department: "Meta", rates: { interrapidisimo: 15190, coordinadora: 20754, envia: 17400, tcc: 19877 } },
+      { key: "pasto", city: "Pasto", department: "Narino", rates: { interrapidisimo: 20090, coordinadora: 30238, envia: 20900, tcc: 24695 } },
+      { key: "monteria", city: "Monteria", department: "Cordoba", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 24695 } },
+      { key: "sincelejo", city: "Sincelejo", department: "Sucre", rates: { coordinadora: 20754, envia: 20900, tcc: 24695 } },
+      { key: "armenia", city: "Armenia", department: "Quindio", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "neiva", city: "Neiva", department: "Huila", rates: { interrapidisimo: 15190, coordinadora: 20754, envia: 17400, tcc: 20680 } },
+      { key: "valledupar", city: "Valledupar", department: "Cesar", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 24695 } },
+      { key: "popayan", city: "Popayan", department: "Cauca", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 20900, tcc: 20680 } },
+      { key: "tunja", city: "Tunja", department: "Boyaca", rates: { interrapidisimo: 15190, coordinadora: 20754, envia: 17400, tcc: 19877 } },
+      { key: "florencia", city: "Florencia", department: "Caqueta", rates: { interrapidisimo: 20090, coordinadora: 20754, envia: 17400, tcc: 20680 } },
+      { key: "yopal", city: "Yopal", department: "Casanare", rates: { interrapidisimo: 15190, coordinadora: 20754, tcc: 20680 } },
+      { key: "riohacha", city: "Riohacha", department: "La Guajira", rates: { interrapidisimo: 20090, coordinadora: 30238, envia: 20900, tcc: 24695 } },
+      { key: "quibdo", city: "Quibdo", department: "Choco", rates: { coordinadora: 29795, tcc: 28261 } }
     ];
 
     const defaults = {
@@ -1568,15 +1594,16 @@
       bundle2Discount: 0,
       bundle3Discount: 4,
       destinationCity: "medellin",
+      shippingCarrier: "auto",
       shippingPolicy: "bogota_free_national_charge",
-      shippingBogotaCost: 8000,
-      shippingNationalCost: 10000,
-      shippingBogotaCharge: 8000,
-      shippingNationalCharge: 10000,
+      shippingBogotaCost: 13650,
+      shippingNationalCost: 20090,
+      shippingBogotaCharge: 13650,
+      shippingNationalCharge: 20090,
       freeShippingThreshold: 180000,
       sourceCosts: "Analisis de costos previo PANEL mayo 2025: camisa base $25.000, DTF + pegado $13.000, bolsa $200, tag $400, envio $8.000, operacion $3.000, publicidad $7.200 por unidad y plataforma 3,5%.",
       sourcePricing: "Precio default temporal: $80.000 por camisa. El analisis previo calcula comision de plataforma sobre ese precio y deja una base para probar margen con cupon del 10%.",
-      sourceShipping: "Tarifas estimadas para paquete liviano tipo camiseta desde Bogota, construidas con referencias de cotizadores/plataformas publicas de envio en Colombia (Envia.com, Akienvio, Coordinadora e Inter Rapidisimo). Mastershop debe reemplazar estos valores por tarifa real por ciudad, peso y transportadora antes de activar."
+      sourceShipping: "Tarifas Mastershop para producto Camisa - Rey, capturadas por ciudad y transportadora. La opcion 'Mas economica' usa la menor tarifa disponible para cada ciudad; si seleccionas una transportadora sin cobertura se toma la menor disponible."
     };
 
     const presets = [
@@ -1655,14 +1682,49 @@
       });
     }
 
-    function selectedCityRate(stateOrKey) {
-      const key = typeof stateOrKey === "string" ? stateOrKey : stateOrKey.destinationCity;
+    function carrierLabel(key) {
+      const carrier = shippingCarriers.find((item) => item.key === key);
+      return carrier ? carrier.label : key;
+    }
+
+    function selectedCityRow(key) {
       return cityShippingRates.find((rate) => rate.key === key) || cityShippingRates[0];
+    }
+
+    function availableRates(row) {
+      return Object.entries(row.rates)
+        .filter(([, value]) => Number.isFinite(value))
+        .map(([carrier, value]) => ({ carrier, value }));
+    }
+
+    function selectedCityRate(stateOrKey) {
+      const state = typeof stateOrKey === "string"
+        ? { destinationCity: stateOrKey, shippingCarrier: "auto" }
+        : stateOrKey;
+      const row = selectedCityRow(state.destinationCity);
+      const options = availableRates(row);
+      const requestedCarrier = state.shippingCarrier || "auto";
+      const selected = requestedCarrier !== "auto" && Number.isFinite(row.rates[requestedCarrier])
+        ? { carrier: requestedCarrier, value: row.rates[requestedCarrier] }
+        : options.reduce((winner, item) => item.value < winner.value ? item : winner, options[0]);
+      return {
+        ...row,
+        carrier: selected.carrier,
+        carrierLabel: carrierLabel(selected.carrier),
+        cost: selected.value,
+        charge: selected.value,
+        source: requestedCarrier !== "auto" && requestedCarrier !== selected.carrier
+          ? `${carrierLabel(requestedCarrier)} sin cobertura; se usa ${carrierLabel(selected.carrier)}`
+          : carrierLabel(selected.carrier)
+      };
     }
 
     function populateCitySelects() {
       const options = cityShippingRates
-        .map((rate) => `<option value="${rate.key}">${rate.city} - ${formatMoney(rate.cost)}</option>`)
+        .map((rate) => {
+          const best = selectedCityRate(rate.key);
+          return `<option value="${rate.key}">${rate.city} - desde ${formatMoney(best.cost)}</option>`;
+        })
         .join("");
       ["destinationCity", "qDestinationCity"].forEach((id) => {
         const node = byId(id);
@@ -1670,27 +1732,51 @@
       });
     }
 
-    function applyCityShippingRate(cityKey) {
-      const rate = selectedCityRate(cityKey);
+    function populateCarrierSelects() {
+      const options = shippingCarriers
+        .map((carrier) => `<option value="${carrier.key}">${carrier.label}</option>`)
+        .join("");
+      ["shippingCarrier", "qShippingCarrier"].forEach((id) => {
+        const node = byId(id);
+        if (node) node.innerHTML = options;
+      });
+    }
+
+    function applyCityShippingRate(cityKey = null, carrierKey = null) {
+      const city = cityKey || byId("destinationCity")?.value || defaults.destinationCity;
+      const carrier = carrierKey || byId("shippingCarrier")?.value || defaults.shippingCarrier;
+      const rate = selectedCityRate({ destinationCity: city, shippingCarrier: carrier });
+      const bogotaRate = selectedCityRate({ destinationCity: "bogota", shippingCarrier: carrier });
+      const bogotaCost = byId("shippingBogotaCost");
+      const bogotaCharge = byId("shippingBogotaCharge");
       const nationalCost = byId("shippingNationalCost");
       const nationalCharge = byId("shippingNationalCharge");
+      if (bogotaCost) bogotaCost.value = bogotaRate.cost;
+      if (bogotaCharge) bogotaCharge.value = bogotaRate.charge;
       if (nationalCost) nationalCost.value = rate.cost;
       if (nationalCharge) nationalCharge.value = rate.charge;
     }
 
     function renderShippingCity(state) {
       const rate = selectedCityRate(state);
+      const carrierRows = shippingCarriers
+        .filter((carrier) => carrier.key !== "auto")
+        .map((carrier) => {
+          const value = selectedCityRow(state.destinationCity).rates[carrier.key];
+          const available = Number.isFinite(value);
+          return `
+            <div class="rate-option${carrier.key === rate.carrier ? " active" : ""}">
+              <span><strong>${carrier.label}</strong>${available ? "Disponible" : "Sin cobertura"}</span>
+              <span>${available ? formatMoney(value) : "-"}</span>
+            </div>
+          `;
+        }).join("");
       byId("shippingCitySummary").innerHTML = `
-        <strong>${rate.city}: ${formatMoney(rate.cost)} estimado por envio</strong>
-        <span>Este valor se usa en escenarios nacionales como costo real y cobro base al cliente. Es editable: cuando tengas la tarifa de Mastershop, reemplaza costo/cobro nacional.</span>
-        <span>Fuente base: ${rate.source}; paquete liviano tipo camiseta desde Bogota.</span>
+        <strong>${rate.city}: ${formatMoney(rate.cost)} con ${rate.carrierLabel}</strong>
+        <span>Tarifa Mastershop para Camisa - Rey. Se usa como costo real y cobro base en escenarios nacionales.</span>
+        <span>${rate.department}. ${rate.source}.</span>
       `;
-      byId("shippingRateGrid").innerHTML = cityShippingRates.map((item) => `
-        <div class="rate-option${item.key === rate.key ? " active" : ""}">
-          <span><strong>${item.city}</strong>${item.source}</span>
-          <span>${formatMoney(item.cost)}</span>
-        </div>
-      `).join("");
+      byId("shippingRateGrid").innerHTML = carrierRows;
     }
 
     function formatMoney(value) {
@@ -1754,7 +1840,8 @@
       const marginPerShirt = revenuePerShirt > 0 ? profitPerShirt / revenuePerShirt : 0;
       const customerSavings = productDiscount + Math.max(0, shipping.normalCharge - shippingPaid);
       const shippingAbsorbed = Math.max(0, shipping.cost - shippingPaid);
-      const shippingCity = scenario.location === "bogota" ? "Bogota" : selectedCityRate(state).city;
+      const rate = selectedCityRate(state);
+      const shippingCity = scenario.location === "bogota" ? "Bogota" : `${rate.city} / ${rate.carrierLabel}`;
 
       return {
         ...scenario,
@@ -2168,7 +2255,7 @@
       byId("actionList").innerHTML = [
         `Decision principal: ${minMargin >= .2 ? "puedes probar ventas con esta regla" : "ajusta antes de vender"} porque el peor margen es ${pct.format(minMargin)} en ${worst.name}.`,
         `Precio actual: ${formatMoney(state.price)}. Si quieres mantener cupon de ${state.couponPct}%, no bajes precio mientras el margen minimo este bajo 20%.`,
-        `Envio: deja ${formatMoney(state.shippingNationalCost)} como costo temporal y valida la tarifa real en Mastershop por ciudad, peso y transportadora.`,
+        `Envio: usa ${formatMoney(state.shippingNationalCost)} como tarifa Mastershop actual para ${selectedCityRate(state).city} con ${selectedCityRate(state).carrierLabel}.`,
         `Mejor escenario actual: ${best.name}, con ${formatMoney(best.profit)} de ganancia bruta.`
       ].map((item) => `<li>${item}</li>`).join("");
 
@@ -2176,7 +2263,7 @@
         { label: `Bajar precio a ${formatMoney(Math.max(0, state.price - 5000))}`, hint: "prueba si una promo de precio aguanta", results: scenarioSet({ price: Math.max(0, state.price - 5000) }) },
         { label: "Subir cupon a 15%", hint: "prueba una promocion mas agresiva", results: scenarioSet({ couponPct: 15 }) },
         { label: "Envio gratis siempre", hint: "mide el maximo ahorro para cliente", results: scenarioSet({ shippingPolicy: "always_free" }) },
-        { label: "Envio real sube a $12.000", hint: "simula una tarifa Mastershop mas alta", results: scenarioSet({ shippingBogotaCost: 12000, shippingNationalCost: 12000 }) },
+        { label: `Envio sube ${formatMoney(5000)}`, hint: "simula una tarifa Mastershop mas alta", results: scenarioSet({ shippingBogotaCost: state.shippingBogotaCost + 5000, shippingNationalCost: state.shippingNationalCost + 5000 }) },
         { label: "Quitar cupon", hint: "mide el margen sin descuento permanente", results: scenarioSet({ couponPct: 0, couponMode: "none" }) }
       ];
 
@@ -2400,6 +2487,7 @@
 
     function init() {
       populateCitySelects();
+      populateCarrierSelects();
       Object.entries(defaults).forEach(([key, value]) => {
         const node = byId(key);
         if (node) node.value = value;
@@ -2409,7 +2497,7 @@
       renderScenarioInputs();
       document.querySelectorAll("#variables input, #variables select, #variables textarea").forEach((node) => {
         node.addEventListener("input", () => {
-          if (node.id === "destinationCity") applyCityShippingRate(node.value);
+          if (node.id === "destinationCity" || node.id === "shippingCarrier") applyCityShippingRate();
           markCustomChange();
         });
       });
@@ -2418,7 +2506,7 @@
           const source = byId(node.dataset.sync);
           if (!source) return;
           source.value = node.value;
-          if (node.dataset.sync === "destinationCity") applyCityShippingRate(node.value);
+          if (node.dataset.sync === "destinationCity" || node.dataset.sync === "shippingCarrier") applyCityShippingRate();
           markCustomChange();
         });
       });

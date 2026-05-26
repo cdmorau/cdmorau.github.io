@@ -1,0 +1,1950 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Distribución Marisol</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg: #f7f1e8;
+      --surface: #fffdf8;
+      --ink: #1f2933;
+      --muted: #64748b;
+      --line: #ead7bd;
+      --orange: #f97316;
+      --orange-dark: #9a3412;
+      --green: #15803d;
+      --red: #b91c1c;
+      --amber: #b45309;
+      --blue: #1d4ed8;
+      --shadow: 0 18px 45px rgba(67, 42, 20, .10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(249, 115, 22, .16), transparent 26%),
+        radial-gradient(circle at 85% 0%, rgba(21, 128, 61, .12), transparent 32%),
+        linear-gradient(135deg, #fff9f0 0%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    button, input, select { font: inherit; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .shell {
+      width: min(1480px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 34px 0 24px;
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 18px;
+      padding: 30px;
+      border: 1px solid rgba(249, 115, 22, .25);
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(255,253,248,.95), rgba(255,244,230,.92));
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      color: var(--orange-dark);
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    h1, h2, h3 { margin: 0; line-height: 1.08; }
+
+    h1 {
+      max-width: 1000px;
+      font-size: clamp(34px, 5vw, 76px);
+      letter-spacing: -.06em;
+    }
+
+    .hero p {
+      max-width: 900px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-top: 1px solid rgba(234, 215, 189, .75);
+      border-bottom: 1px solid rgba(234, 215, 189, .9);
+      background: rgba(255, 249, 240, .88);
+      backdrop-filter: blur(18px);
+    }
+
+    .toolbar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--ink);
+      font-weight: 800;
+      box-shadow: 0 10px 18px rgba(31,41,51,.12);
+    }
+
+    .btn.secondary {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn.orange { background: var(--orange); }
+    .btn.green { background: var(--green); }
+    .btn.danger { background: var(--red); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .mini-btn {
+      min-height: 32px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      font-weight: 900;
+    }
+
+    .mini-btn.danger {
+      color: var(--red);
+      background: #fee2e2;
+      border-color: #fecaca;
+    }
+
+    main { padding: 22px 0 58px; }
+
+    section {
+      margin-top: 22px;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid rgba(234, 215, 189, .95);
+      border-radius: var(--radius);
+      background: rgba(255,253,248,.92);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      display: grid;
+      gap: 6px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .info-btn {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: var(--orange-dark);
+      background: #ffedd5;
+      font-weight: 900;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input[type="file"], input[type="number"], input[type="text"], select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .radio-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .pill-option {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .pill-option input { width: auto; min-height: auto; }
+
+    .status {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status-line {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    .dot.ok { background: var(--green); }
+    .dot.bad { background: var(--red); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi {
+      padding: 16px;
+      border: 1px solid #fed7aa;
+      border-radius: 18px;
+      background: #fff7ed;
+    }
+
+    .kpi span {
+      display: block;
+      color: var(--orange-dark);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .kpi strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .tab.active {
+      color: #fff;
+      background: var(--orange);
+      border-color: var(--orange);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .manager-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 11px;
+      border-bottom: 1px solid #f1dfc6;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #fff;
+      background: var(--orange);
+      font-weight: 900;
+    }
+
+    td.num, th.num { text-align: right; }
+
+    .matrix td, .matrix th { text-align: center; }
+    .matrix td:first-child, .matrix th:first-child { text-align: left; }
+
+    .cell-toggle {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--green);
+      font-weight: 900;
+    }
+
+    .cell-toggle.off {
+      color: var(--muted);
+      background: #f1f5f9;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: var(--ink);
+      background: #f1f5f9;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .tag.red { color: var(--red); background: #fee2e2; }
+    .tag.green { color: var(--green); background: #dcfce7; }
+    .tag.amber { color: var(--amber); background: #fef3c7; }
+    .tag.blue { color: var(--blue); background: #dbeafe; }
+
+    .bars {
+      display: grid;
+      gap: 14px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 145px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .bar-track {
+      position: relative;
+      height: 26px;
+      border-radius: 999px;
+      background: #ffedd5;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #fb923c, #ea580c);
+    }
+
+    .bar-target {
+      position: absolute;
+      top: -5px;
+      bottom: -5px;
+      width: 2px;
+      background: #111827;
+    }
+
+    .warning-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .warning-list li {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #fff7ed;
+      color: var(--amber);
+      font-weight: 800;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15, 23, 42, .50);
+    }
+
+    .modal.open { display: grid; }
+
+    .modal-card {
+      width: min(760px, 100%);
+      max-height: min(760px, calc(100vh - 40px));
+      overflow: auto;
+      padding: 24px;
+      border-radius: 24px;
+      background: #fffdf8;
+      box-shadow: 0 24px 90px rgba(0,0,0,.22);
+    }
+
+    .modal-card p, .modal-card li { color: var(--muted); }
+
+    .empty {
+      padding: 18px;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.6);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1100px) {
+      .grid.two, .grid.three, .grid.four, .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .grid.two, .grid.three, .grid.four, .kpi-grid { grid-template-columns: 1fr; }
+      .hero-card { padding: 22px; }
+      .card { padding: 15px; }
+      th, td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="shell">
+      <div class="hero-card">
+        <div class="eyebrow">Simulador operativo</div>
+        <h1>Distribución inteligente de proyectos</h1>
+        <p>Carga los Excel, define reglas por celdas, compara escenarios con y sin morosos, genera alternativas reproducibles y exporta el resultado final con trazabilidad.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toolbar">
+    <div class="shell toolbar-inner">
+      <button class="btn orange" id="btn-calc">Calcular distribución</button>
+      <button class="btn secondary" id="btn-alt">Generar alternativa</button>
+      <button class="btn secondary" id="btn-compare">Comparar con/sin morosos</button>
+      <button class="btn green" id="btn-export">Descargar Excel</button>
+      <span class="tag blue" id="seed-label">Semilla: 1</span>
+      <span class="tag" id="mode-label">Modo: Rígido regional</span>
+    </div>
+  </nav>
+
+  <main class="shell">
+    <section class="card">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>1. Carga de archivos</h2>
+          <p>Los archivos se procesan localmente en tu navegador; no se suben a ningún servidor.</p>
+        </div>
+        <button class="info-btn" data-info="files">?</button>
+      </div>
+      <div class="grid two">
+        <label>Excel de proyectos
+          <input type="file" id="projects-file" accept=".xlsx,.xls">
+        </label>
+        <label>Excel de recaudo
+          <input type="file" id="recaudo-file" accept=".xlsx,.xls">
+        </label>
+      </div>
+      <div class="status" id="file-status">
+        <div class="status-line"><span class="dot"></span><span>Esperando archivos.</span></div>
+      </div>
+      <div class="status" id="cache-status">
+        <div class="status-line">
+          <span class="dot"></span>
+          <span>Cache local sin revisar.</span>
+          <button class="mini-btn" id="btn-load-cache" disabled>Usar archivos guardados</button>
+          <button class="mini-btn danger" id="btn-clear-cache" disabled>Eliminar archivos guardados</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <div class="section-head">
+          <div class="section-title">
+            <h2>2. Parámetros</h2>
+            <p>Reglas editables sin JSON. Ajusta y recalcula cuantas veces necesites.</p>
+          </div>
+          <button class="info-btn" data-info="params">?</button>
+        </div>
+        <div class="grid two">
+          <label>Umbral morosidad (%)
+            <input type="number" id="threshold" value="70" min="0" max="200" step="1">
+          </label>
+          <label>Semilla reproducible
+            <input type="number" id="seed" value="1" min="1" step="1">
+          </label>
+          <label>Máx. regionales por gestor
+            <input type="number" id="max-regions" value="2" min="1" step="1">
+          </label>
+          <label>Gestores deseados por regional
+            <input type="number" id="target-region-managers" value="2" min="1" step="1">
+          </label>
+          <label>Peso equidad operativa
+            <input type="number" id="weight-load" value="1" min="0" step="0.1">
+          </label>
+          <label>Peso dispersión morosos
+            <input type="number" id="weight-bad" value="0.55" min="0" step="0.05">
+          </label>
+          <label>Penalización excepción regional
+            <input type="number" id="weight-exception" value="1.25" min="0" step="0.05">
+          </label>
+          <label>Modo de distribución
+            <select id="ownership-mode">
+              <option value="strict" selected>Rígido regional</option>
+              <option value="flex">Flexible balanceado</option>
+            </select>
+          </label>
+        </div>
+        <div class="radio-row" style="margin-top: 14px;">
+          <label class="pill-option"><input type="radio" name="bad-mode" value="with" checked> Vista con morosos</label>
+          <label class="pill-option"><input type="radio" name="bad-mode" value="without"> Vista sin morosos</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <div class="section-title">
+            <h2>3. Validación</h2>
+            <p>La app detecta columnas, gestores, regionales y proyectos malos.</p>
+          </div>
+          <button class="info-btn" data-info="validation">?</button>
+        </div>
+        <ul class="warning-list" id="warnings">
+          <li>Carga los archivos para iniciar la validación.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>4. Gestores</h2>
+          <p>Agrega, renombra, elimina o invisibiliza gestores. Si ya calculaste, los cambios recalculan automáticamente.</p>
+        </div>
+        <button class="info-btn" data-info="managers">?</button>
+      </div>
+      <div class="manager-actions">
+        <button class="mini-btn" id="btn-add-cobro">+ Agregar gestor cobro</button>
+        <button class="mini-btn" id="btn-add-ingresos">+ Agregar gestor ingresos</button>
+      </div>
+      <div class="table-wrap">
+        <table id="managers-table"></table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>5. Matriz gestor-regional</h2>
+          <p>Las celdas activas indican qué regional puede manejar cada gestor.</p>
+        </div>
+        <button class="info-btn" data-info="matrix">?</button>
+      </div>
+      <div class="table-wrap">
+        <table id="matrix-table" class="matrix"></table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>6. Excepciones regionales</h2>
+          <p>Define regionales que pueden tener menos gestores por ser pequeñas o especiales.</p>
+        </div>
+        <button class="info-btn" data-info="regionRules">?</button>
+      </div>
+      <div class="table-wrap">
+        <table id="region-rules-table"></table>
+      </div>
+    </section>
+
+    <section class="card" id="dashboard-card">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>Dashboard</h2>
+          <p id="dashboard-subtitle">Calcula una distribución para ver resultados.</p>
+        </div>
+        <button class="info-btn" data-info="dashboard">?</button>
+      </div>
+      <div class="kpi-grid" id="kpis"></div>
+      <div class="grid two" style="margin-top: 18px;">
+        <div>
+          <h3>Cobro: carga vs objetivo</h3>
+          <div class="bars" id="bars-cobro"></div>
+        </div>
+        <div>
+          <h3>Ingresos: carga vs objetivo</h3>
+          <div class="bars" id="bars-ingresos"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div class="section-title">
+          <h2>Resultados</h2>
+          <p>Revisa resumen, balance regional, asignación por proyecto y alertas.</p>
+        </div>
+        <button class="info-btn" data-info="results">?</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="summary">Resumen gestores</button>
+        <button class="tab" data-tab="regional">Balance regional</button>
+        <button class="tab" data-tab="projects">Asignación proyectos</button>
+        <button class="tab" data-tab="details">Detalle etapas</button>
+        <button class="tab" data-tab="alerts">Alertas recaudo</button>
+        <button class="tab" data-tab="diag">Diagnóstico regional</button>
+      </div>
+      <div class="table-wrap">
+        <table id="results-table"></table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="info-modal">
+    <div class="modal-card">
+      <div class="section-head">
+        <h2 id="modal-title">Ayuda</h2>
+        <button class="btn secondary" id="modal-close">Cerrar</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      projectRows: [],
+      projects: [],
+      detailRows: [],
+      recaudoAlerts: [],
+      regionalDiagnostics: [],
+      managers: [],
+      regions: [],
+      matrix: {},
+      regionRules: {},
+      results: null,
+      activeTab: "summary",
+      comparison: null
+    };
+
+    const aliasMap = new Map([
+      ["SPC AGORA", "AGR AGORA"],
+      ["LMQ ORIZZO", "MLQ ORIZZO"],
+      ["STC SIENA", "HSC SIENA"],
+      ["STC TORINO", "HSC TORINO"],
+      ["CRS BALCONES DEL PARQUE", "BDP BALCONES DEL PARQUE"],
+      ["CHO VESTA", "VST VESTA"],
+      ["RDV SERRANIA DEL VINCULO I", "RDV SERRANIA DEL VINCULO"]
+    ]);
+
+    const infoContent = {
+      files: ["Carga los dos Excel originales.", "La base de proyectos define qué se asigna.", "La base de recaudo define morosidad y diagnóstico regional.", "El procesamiento ocurre solo en el navegador."],
+      params: ["Umbral morosidad: por defecto 70%; proyecto malo si cumplimiento acumulado es menor.", "Modo rígido: no asigna fuera de la matriz gestor-regional.", "Modo flexible: permite excepciones, pero las penaliza y las marca.", "Semilla: permite reproducir una alternativa exacta."],
+      validation: ["La app busca columnas por nombres similares y muestra advertencias si falta algo.", "Las filas resumen de regional no se asignan como proyectos.", "Los proyectos sin match de recaudo quedan visibles para revisión."],
+      managers: ["Visible: si se apaga, el gestor queda invisibilizado y no recibe nuevos proyectos.", "Puedes renombrar, cambiar de rol, agregar o eliminar gestores de la simulación.", "Capacidad: pondera el objetivo de carga. 1 es normal; 0.5 recibe menos; 2 recibe más.", "Los cambios recalculan la distribución si ya había un resultado en pantalla."],
+      matrix: ["Cada celda representa permiso gestor-regional.", "En modo rígido es una restricción dura.", "En modo flexible es preferencia fuerte: puede romperse si mejora la equidad."],
+      regionRules: ["Gestores deseados por regional ayuda a evitar que toda una regional quede en una sola persona.", "Permitir 1 gestor sirve para regionales pequeñas o con poca carga.", "Estas reglas afectan advertencias y el cálculo."],
+      dashboard: ["Muestra carga contra objetivo, morosos, regionales y excepciones.", "La vista con morosos penaliza concentración de proyectos malos.", "La vista sin morosos ignora morosidad para asignar, pero la sigue mostrando."],
+      results: ["Resumen gestores: carga total y desviación.", "Balance regional: qué regionales tiene cada gestor.", "Asignación proyectos: resultado principal por macroproyecto.", "Alertas recaudo: cruce con la base de recaudo."]
+    };
+
+    const cacheConfig = {
+      dbName: "marisol-distribucion-cache",
+      storeName: "files",
+      projectKey: "projects",
+      recaudoKey: "recaudo"
+    };
+
+    const el = (id) => document.getElementById(id);
+    const fmt = (n) => Number(n || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 });
+    const pct = (n) => `${((Number(n || 0)) * 100).toLocaleString("es-CO", { maximumFractionDigits: 1 })}%`;
+
+    function normalize(value) {
+      return String(value ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toUpperCase();
+    }
+
+    function headerKey(value) {
+      return normalize(value).replace(/[^A-Z0-9]/g, "");
+    }
+
+    function seededRandom(seed) {
+      let s = Number(seed) || 1;
+      return function random() {
+        s = (s * 1664525 + 1013904223) >>> 0;
+        return s / 4294967296;
+      };
+    }
+
+    function shuffleTie(value, random) {
+      return value + random() * 0.000001;
+    }
+
+    function readWorkbook(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = new Uint8Array(event.target.result);
+            resolve(XLSX.read(data, { type: "array", cellDates: true }));
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function workbookFromBuffer(buffer) {
+      return XLSX.read(new Uint8Array(buffer), { type: "array", cellDates: true });
+    }
+
+    function openCacheDb() {
+      return new Promise((resolve, reject) => {
+        if (!("indexedDB" in window)) {
+          reject(new Error("Este navegador no soporta cache local IndexedDB."));
+          return;
+        }
+        const request = indexedDB.open(cacheConfig.dbName, 1);
+        request.onupgradeneeded = () => {
+          request.result.createObjectStore(cacheConfig.storeName, { keyPath: "key" });
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function cachePut(record) {
+      const db = await openCacheDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(cacheConfig.storeName, "readwrite");
+        tx.objectStore(cacheConfig.storeName).put(record);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function cacheGet(key) {
+      const db = await openCacheDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(cacheConfig.storeName, "readonly");
+        const request = tx.objectStore(cacheConfig.storeName).get(key);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function cacheClear() {
+      const db = await openCacheDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(cacheConfig.storeName, "readwrite");
+        tx.objectStore(cacheConfig.storeName).clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function saveFilesToCache(projectFile, recaudoFile) {
+      await Promise.all([
+        cachePut({
+          key: cacheConfig.projectKey,
+          name: projectFile.name,
+          size: projectFile.size,
+          type: projectFile.type,
+          lastModified: projectFile.lastModified,
+          savedAt: new Date().toISOString(),
+          buffer: await projectFile.arrayBuffer()
+        }),
+        cachePut({
+          key: cacheConfig.recaudoKey,
+          name: recaudoFile.name,
+          size: recaudoFile.size,
+          type: recaudoFile.type,
+          lastModified: recaudoFile.lastModified,
+          savedAt: new Date().toISOString(),
+          buffer: await recaudoFile.arrayBuffer()
+        })
+      ]);
+      await refreshCacheStatus();
+    }
+
+    async function getCachedFiles() {
+      const [project, recaudo] = await Promise.all([
+        cacheGet(cacheConfig.projectKey),
+        cacheGet(cacheConfig.recaudoKey)
+      ]);
+      return { project, recaudo };
+    }
+
+    async function refreshCacheStatus() {
+      const container = el("cache-status");
+      try {
+        const { project, recaudo } = await getCachedFiles();
+        const hasBoth = !!project && !!recaudo;
+        el("btn-load-cache").disabled = !hasBoth;
+        el("btn-clear-cache").disabled = !project && !recaudo;
+        const text = hasBoth
+          ? `Archivos guardados: ${project.name} y ${recaudo.name}.`
+          : "No hay pareja de archivos guardada en cache local.";
+        container.querySelector("span:last-of-type").textContent = text;
+        container.querySelector(".dot").className = `dot ${hasBoth ? "ok" : ""}`;
+      } catch (error) {
+        el("btn-load-cache").disabled = true;
+        el("btn-clear-cache").disabled = true;
+        container.querySelector("span:last-of-type").textContent = error.message;
+        container.querySelector(".dot").className = "dot bad";
+      }
+    }
+
+    function sheetRows(workbook, sheetName) {
+      return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: true, defval: null });
+    }
+
+    function findProjectSheet(workbook) {
+      const aliases = [
+        ["macro", ["MACROPROYECTO"]],
+        ["stage", ["PROYECTOETAPA", "PROYECTOETAPA"]],
+        ["region", ["REGIONAL"]],
+        ["cobro", ["GESTORRECAUDOCOBRO"]],
+        ["ingresos", ["GESTORRECAUDOINGRESOS"]],
+        ["und", ["UNDVENDIDAS"]],
+        ["ci", ["PENDCUOTAINICIAL"]]
+      ];
+      let best = null;
+      for (const sheetName of workbook.SheetNames) {
+        const rows = sheetRows(workbook, sheetName);
+        for (let rowIndex = 0; rowIndex < Math.min(rows.length, 12); rowIndex += 1) {
+          const keys = rows[rowIndex].map(headerKey);
+          const score = aliases.reduce((sum, [, variants]) => sum + (variants.some(v => keys.includes(v)) ? 1 : 0), 0);
+          if (!best || score > best.score) best = { sheetName, rowIndex, rows, score };
+        }
+      }
+      if (!best || best.score < 5) throw new Error("No se detectó la hoja de proyectos.");
+      return best;
+    }
+
+    function mapHeaders(headers) {
+      const keys = headers.map(headerKey);
+      const find = (...variants) => {
+        const idx = keys.findIndex(key => variants.includes(key));
+        return idx >= 0 ? idx : null;
+      };
+      return {
+        macro: find("MACROPROYECTO"),
+        stage: find("PROYECTOETAPA", "PROYECTOETAPA"),
+        region: find("REGIONAL"),
+        cobro: find("GESTORRECAUDOCOBRO"),
+        ingresos: find("GESTORRECAUDOINGRESOS"),
+        fiduciaria: find("FIDUCIARIA"),
+        tipo: find("TIPODEVIVIENDA"),
+        und: find("UNDVENDIDAS"),
+        ci: find("PENDCUOTAINICIAL")
+      };
+    }
+
+    function parseProjects(workbook) {
+      const detected = findProjectSheet(workbook);
+      const headers = detected.rows[detected.rowIndex];
+      const map = mapHeaders(headers);
+      const required = ["macro", "stage", "region", "cobro", "ingresos", "und", "ci"];
+      const missing = required.filter(key => map[key] === null);
+      if (missing.length) throw new Error(`Faltan columnas en proyectos: ${missing.join(", ")}`);
+
+      const grouped = new Map();
+      const details = [];
+      for (let i = detected.rowIndex + 1; i < detected.rows.length; i += 1) {
+        const row = detected.rows[i];
+        if (!row || !row.some(Boolean)) continue;
+        const projectName = row[map.macro];
+        const region = row[map.region];
+        if (!projectName || !region) continue;
+        const key = normalize(projectName);
+        const ci = Number(row[map.ci] || 0);
+        const und = Number(row[map.und] || 0);
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            key,
+            name: projectName,
+            region,
+            fiduciaria: map.fiduciaria !== null ? row[map.fiduciaria] : "",
+            tipo: map.tipo !== null ? row[map.tipo] : "",
+            stages: 0,
+            und: 0,
+            ci: 0,
+            currentCobro: new Map(),
+            currentIngresos: new Map()
+          });
+        }
+        const project = grouped.get(key);
+        project.stages += 1;
+        project.und += und;
+        project.ci += ci;
+        addWeighted(project.currentCobro, row[map.cobro], ci);
+        addWeighted(project.currentIngresos, row[map.ingresos], ci);
+        details.push({
+          macro: projectName,
+          stage: row[map.stage],
+          region,
+          cobroActual: row[map.cobro],
+          ingresosActual: row[map.ingresos],
+          fiduciaria: map.fiduciaria !== null ? row[map.fiduciaria] : "",
+          tipo: map.tipo !== null ? row[map.tipo] : "",
+          und,
+          ci
+        });
+      }
+      return { projects: Array.from(grouped.values()), details, detected };
+    }
+
+    function addWeighted(map, key, value) {
+      if (!key) return;
+      map.set(String(key), (map.get(String(key)) || 0) + Number(value || 0));
+    }
+
+    function mainManager(map) {
+      return Array.from(map.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+    }
+
+    function managerList(map) {
+      return Array.from(map.entries()).sort((a, b) => b[1] - a[1]).map(([name, value]) => `${name} (${fmt(value)})`).join(", ");
+    }
+
+    function isRegionalRow(name) {
+      return /^\d{2}\s/.test(normalize(name));
+    }
+
+    function projectSuffix(name) {
+      const parts = normalize(name).split(" ");
+      return parts.slice(1).join(" ");
+    }
+
+    function findProjectMatch(sourceName, projects) {
+      const source = normalize(sourceName);
+      const alias = aliasMap.get(source);
+      if (alias) {
+        const exactAlias = projects.find(p => p.key === normalize(alias));
+        if (exactAlias) return exactAlias.key;
+      }
+      const exact = projects.find(p => p.key === source);
+      if (exact) return exact.key;
+      const suffix = projectSuffix(source);
+      if (suffix) {
+        const candidates = projects.filter(p => projectSuffix(p.name) === suffix || normalize(p.name).endsWith(suffix));
+        if (candidates.length === 1) return candidates[0].key;
+      }
+      return null;
+    }
+
+    function parseRecaudo(workbook, projects) {
+      const sheetName = workbook.SheetNames.find(name => normalize(name) === "BASE") || workbook.SheetNames[0];
+      const rows = sheetRows(workbook, sheetName);
+      const monthSpecs = [
+        { key: "jan", label: 0, value: 4 },
+        { key: "feb", label: 7, value: 11 },
+        { key: "mar", label: 14, value: 18 }
+      ];
+      const monthly = { jan: new Map(), feb: new Map(), mar: new Map() };
+      for (let r = 2; r < rows.length; r += 1) {
+        const row = rows[r] || [];
+        for (const spec of monthSpecs) {
+          const name = row[spec.label];
+          const value = Number(row[spec.value]);
+          if (name && Number.isFinite(value)) monthly[spec.key].set(normalize(name), value);
+        }
+      }
+
+      const alerts = [];
+      const diagnostics = [];
+      for (let r = 2; r < rows.length; r += 1) {
+        const row = rows[r] || [];
+        const sourceName = row[21];
+        if (!sourceName) continue;
+        const key = normalize(sourceName);
+        const jan = monthly.jan.get(key) ?? Number(row[22]) ?? 0;
+        const feb = monthly.feb.get(key) ?? Number(row[23]) ?? 0;
+        const mar = monthly.mar.get(key) ?? Number(row[24]) ?? 0;
+        const values = [jan, feb, mar].map(v => Number.isFinite(v) ? v : 0);
+        const accumulated = values.reduce((sum, value) => sum + value, 0) / 3;
+        const record = {
+          sourceName,
+          jan: values[0],
+          feb: values[1],
+          mar: values[2],
+          accumulated,
+          lowMonths: values.filter(value => value < 0.7).length,
+          note: row[27] || ""
+        };
+        if (isRegionalRow(sourceName)) {
+          diagnostics.push(record);
+        } else {
+          const projectKey = findProjectMatch(sourceName, projects);
+          alerts.push({ ...record, projectKey, match: projectKey ? "Encontrado" : "Sin match" });
+        }
+      }
+      return { alerts, diagnostics };
+    }
+
+    function buildInitialConfig() {
+      const managerMap = new Map();
+      const regions = Array.from(new Set(state.projects.map(project => project.region))).sort();
+      const addManager = (name, role) => {
+        if (!name) return;
+        const key = `${role}|${name}`;
+        if (!managerMap.has(key)) managerMap.set(key, { id: key, name, role, active: true, capacity: 1 });
+      };
+      for (const project of state.projects) {
+        for (const name of project.currentCobro.keys()) addManager(name, "Cobro");
+        for (const name of project.currentIngresos.keys()) addManager(name, "Ingresos");
+      }
+      state.managers = Array.from(managerMap.values()).sort((a, b) => a.role.localeCompare(b.role) || a.name.localeCompare(b.name));
+      state.regions = regions;
+      state.matrix = {};
+      for (const manager of state.managers) {
+        state.matrix[manager.id] = {};
+        for (const region of regions) state.matrix[manager.id][region] = false;
+      }
+      for (const project of state.projects) {
+        for (const name of project.currentCobro.keys()) state.matrix[`Cobro|${name}`][project.region] = true;
+        for (const name of project.currentIngresos.keys()) state.matrix[`Ingresos|${name}`][project.region] = true;
+      }
+      state.regionRules = {};
+      for (const region of regions) {
+        const regionCi = state.projects.filter(p => p.region === region).reduce((sum, p) => sum + p.ci, 0);
+        state.regionRules[region] = { targetManagers: Number(el("target-region-managers").value || 2), allowOne: regionCi < 650, priority: 1 };
+      }
+    }
+
+    async function handleFiles() {
+      const projectFile = el("projects-file").files[0];
+      const recaudoFile = el("recaudo-file").files[0];
+      if (!projectFile || !recaudoFile) return;
+      try {
+        setFileStatus("Leyendo archivos...", "pending");
+        const [projectWb, recaudoWb] = await Promise.all([readWorkbook(projectFile), readWorkbook(recaudoFile)]);
+        processWorkbooks(projectWb, recaudoWb);
+        await saveFilesToCache(projectFile, recaudoFile);
+        setFileStatus(`Archivos cargados: ${state.projects.length} macroproyectos y ${state.detailRows.length} etapas.`, "ok");
+      } catch (error) {
+        console.error(error);
+        setFileStatus(error.message, "bad");
+      }
+    }
+
+    async function loadCachedFiles() {
+      try {
+        setFileStatus("Cargando archivos guardados en cache...", "pending");
+        const { project, recaudo } = await getCachedFiles();
+        if (!project || !recaudo) throw new Error("No hay dos archivos guardados para reutilizar.");
+        processWorkbooks(workbookFromBuffer(project.buffer), workbookFromBuffer(recaudo.buffer));
+        setFileStatus(`Cache cargado: ${state.projects.length} macroproyectos y ${state.detailRows.length} etapas.`, "ok");
+      } catch (error) {
+        console.error(error);
+        setFileStatus(error.message, "bad");
+      }
+    }
+
+    async function clearCachedFiles() {
+      await cacheClear();
+      await refreshCacheStatus();
+      el("projects-file").value = "";
+      el("recaudo-file").value = "";
+      setFileStatus("Cache eliminado. Puedes subir una nueva pareja de Excel.", "pending");
+    }
+
+    function processWorkbooks(projectWb, recaudoWb) {
+      const projectParsed = parseProjects(projectWb);
+      state.projects = projectParsed.projects;
+      state.detailRows = projectParsed.details;
+      const recaudoParsed = parseRecaudo(recaudoWb, state.projects);
+      state.recaudoAlerts = recaudoParsed.alerts;
+      state.regionalDiagnostics = recaudoParsed.diagnostics;
+      state.results = null;
+      enrichProjectsWithRecaudo();
+      buildInitialConfig();
+      renderConfiguration();
+      validateInputs();
+      renderActiveTable();
+      renderDashboard();
+    }
+
+    function enrichProjectsWithRecaudo() {
+      const threshold = Number(el("threshold").value || 70) / 100;
+      const alertByProject = new Map(state.recaudoAlerts.filter(item => item.projectKey).map(item => [item.projectKey, item]));
+      for (const project of state.projects) {
+        const alert = alertByProject.get(project.key);
+        project.recaudo = alert || null;
+        project.isBad = !!alert && alert.accumulated < threshold;
+        project.severity = !alert ? "Sin dato" : (alert.accumulated < 0.5 ? "Crítico" : (alert.accumulated < threshold ? "Alto" : "Normal"));
+      }
+    }
+
+    function setFileStatus(message, kind) {
+      const dotClass = kind === "ok" ? "ok" : (kind === "bad" ? "bad" : "");
+      el("file-status").innerHTML = `<div class="status-line"><span class="dot ${dotClass}"></span><span>${message}</span></div>`;
+    }
+
+    function renderConfiguration() {
+      renderManagersTable();
+      renderMatrixTable();
+      renderRegionRulesTable();
+    }
+
+    function renderManagersTable() {
+      const table = el("managers-table");
+      if (!state.managers.length) {
+        table.innerHTML = `<tr><td class="empty">Carga archivos para detectar gestores.</td></tr>`;
+        return;
+      }
+      table.innerHTML = `
+        <thead><tr><th>Visible</th><th>Rol</th><th>Gestor</th><th>Capacidad</th><th>Regionales permitidas</th><th>Acción</th></tr></thead>
+        <tbody>${state.managers.map(manager => `
+          <tr>
+            <td><input type="checkbox" data-manager-active="${manager.id}" ${manager.active ? "checked" : ""}></td>
+            <td>
+              <select data-manager-role="${manager.id}">
+                <option value="Cobro" ${manager.role === "Cobro" ? "selected" : ""}>Cobro</option>
+                <option value="Ingresos" ${manager.role === "Ingresos" ? "selected" : ""}>Ingresos</option>
+              </select>
+            </td>
+            <td><input type="text" value="${escapeAttr(manager.name)}" data-manager-name="${manager.id}"></td>
+            <td><input type="number" min="0.1" step="0.1" value="${manager.capacity}" data-manager-capacity="${manager.id}"></td>
+            <td>${Object.entries(state.matrix[manager.id] || {}).filter(([, active]) => active).map(([region]) => `<span class="tag">${region}</span>`).join(" ") || "Sin regional"}</td>
+            <td><button class="mini-btn danger" data-manager-delete="${manager.id}">Eliminar</button></td>
+          </tr>
+        `).join("")}</tbody>`;
+      table.querySelectorAll("[data-manager-active]").forEach(input => {
+        input.addEventListener("change", () => {
+          const manager = state.managers.find(item => item.id === input.dataset.managerActive);
+          manager.active = input.checked;
+          validateInputs();
+          recalcIfReady();
+        });
+      });
+      table.querySelectorAll("[data-manager-capacity]").forEach(input => {
+        input.addEventListener("change", () => {
+          const manager = state.managers.find(item => item.id === input.dataset.managerCapacity);
+          manager.capacity = Math.max(0.1, Number(input.value || 1));
+          recalcIfReady();
+        });
+        input.addEventListener("input", () => {
+          const manager = state.managers.find(item => item.id === input.dataset.managerCapacity);
+          manager.capacity = Math.max(0.1, Number(input.value || 1));
+          scheduleRecalc();
+        });
+      });
+      table.querySelectorAll("[data-manager-name]").forEach(input => {
+        input.addEventListener("change", () => updateManagerIdentity(input.dataset.managerName, input.value, null));
+      });
+      table.querySelectorAll("[data-manager-role]").forEach(select => {
+        select.addEventListener("change", () => updateManagerIdentity(select.dataset.managerRole, null, select.value));
+      });
+      table.querySelectorAll("[data-manager-delete]").forEach(button => {
+        button.addEventListener("click", () => deleteManager(button.dataset.managerDelete));
+      });
+    }
+
+    function escapeAttr(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function makeManagerId(role, name) {
+      return `${role}|${String(name || "").trim()}`;
+    }
+
+    function ensureMatrixRow(managerId) {
+      if (!state.matrix[managerId]) state.matrix[managerId] = {};
+      for (const region of state.regions) {
+        if (state.matrix[managerId][region] === undefined) state.matrix[managerId][region] = false;
+      }
+    }
+
+    function updateManagerIdentity(managerId, nextName, nextRole) {
+      const manager = state.managers.find(item => item.id === managerId);
+      if (!manager) return;
+      const cleanName = String(nextName ?? manager.name).trim();
+      const cleanRole = nextRole ?? manager.role;
+      if (!cleanName) {
+        alert("El gestor necesita un nombre.");
+        renderManagersTable();
+        return;
+      }
+      const nextId = makeManagerId(cleanRole, cleanName);
+      const duplicate = state.managers.some(item => item.id !== managerId && item.id === nextId);
+      if (duplicate) {
+        alert("Ya existe un gestor con ese mismo nombre y rol.");
+        renderManagersTable();
+        return;
+      }
+      if (nextId !== managerId) {
+        state.matrix[nextId] = state.matrix[managerId] || {};
+        delete state.matrix[managerId];
+        manager.id = nextId;
+      }
+      manager.name = cleanName;
+      manager.role = cleanRole;
+      ensureMatrixRow(manager.id);
+      state.managers.sort((a, b) => a.role.localeCompare(b.role) || a.name.localeCompare(b.name));
+      renderConfiguration();
+      validateInputs();
+      recalcIfReady();
+    }
+
+    function addManualManager(role) {
+      const base = role === "Cobro" ? "Nuevo gestor cobro" : "Nuevo gestor ingresos";
+      let counter = 1;
+      let name = `${base} ${counter}`;
+      while (state.managers.some(manager => manager.id === makeManagerId(role, name))) {
+        counter += 1;
+        name = `${base} ${counter}`;
+      }
+      const manager = { id: makeManagerId(role, name), name, role, active: true, capacity: 1 };
+      state.managers.push(manager);
+      state.matrix[manager.id] = {};
+      for (const region of state.regions) state.matrix[manager.id][region] = false;
+      state.managers.sort((a, b) => a.role.localeCompare(b.role) || a.name.localeCompare(b.name));
+      renderConfiguration();
+      validateInputs();
+      recalcIfReady();
+    }
+
+    function deleteManager(managerId) {
+      const manager = state.managers.find(item => item.id === managerId);
+      if (!manager) return;
+      const confirmed = confirm(`¿Eliminar a ${manager.name} de ${manager.role}? No se borran los datos originales, solo sale de la simulación.`);
+      if (!confirmed) return;
+      state.managers = state.managers.filter(item => item.id !== managerId);
+      delete state.matrix[managerId];
+      renderConfiguration();
+      validateInputs();
+      recalcIfReady();
+    }
+
+    function recalcIfReady() {
+      if (state.results && state.projects.length) calculateDistribution(false);
+    }
+
+    let recalcTimer = null;
+    function scheduleRecalc() {
+      clearTimeout(recalcTimer);
+      recalcTimer = setTimeout(recalcIfReady, 250);
+    }
+
+    function renderMatrixTable() {
+      const table = el("matrix-table");
+      if (!state.managers.length) {
+        table.innerHTML = `<tr><td class="empty">Carga archivos para editar la matriz.</td></tr>`;
+        return;
+      }
+      table.innerHTML = `
+        <thead><tr><th>Gestor</th><th>Rol</th>${state.regions.map(region => `<th>${region}</th>`).join("")}</tr></thead>
+        <tbody>${state.managers.map(manager => `
+          <tr>
+            <td>${manager.name}</td>
+            <td><span class="tag blue">${manager.role}</span></td>
+            ${state.regions.map(region => {
+              const active = !!state.matrix[manager.id]?.[region];
+              return `<td><button class="cell-toggle ${active ? "" : "off"}" data-matrix="${manager.id}" data-region="${region}">${active ? "✓" : "·"}</button></td>`;
+            }).join("")}
+          </tr>
+        `).join("")}</tbody>`;
+      table.querySelectorAll("[data-matrix]").forEach(button => {
+        button.addEventListener("click", () => {
+          const managerId = button.dataset.matrix;
+          const region = button.dataset.region;
+          state.matrix[managerId][region] = !state.matrix[managerId][region];
+          renderConfiguration();
+          validateInputs();
+          recalcIfReady();
+        });
+      });
+    }
+
+    function renderRegionRulesTable() {
+      const table = el("region-rules-table");
+      if (!state.regions.length) {
+        table.innerHTML = `<tr><td class="empty">Carga archivos para configurar regionales.</td></tr>`;
+        return;
+      }
+      table.innerHTML = `
+        <thead><tr><th>Regional</th><th>Gestores deseados</th><th>Permite 1 gestor</th><th>Prioridad</th><th>CI total</th></tr></thead>
+        <tbody>${state.regions.map(region => {
+          const rule = state.regionRules[region];
+          const ci = state.projects.filter(p => p.region === region).reduce((sum, p) => sum + p.ci, 0);
+          return `<tr>
+            <td>${region}</td>
+            <td><input type="number" min="1" step="1" value="${rule.targetManagers}" data-region-target="${region}"></td>
+            <td><input type="checkbox" ${rule.allowOne ? "checked" : ""} data-region-one="${region}"></td>
+            <td><input type="number" min="0" step="0.1" value="${rule.priority}" data-region-priority="${region}"></td>
+            <td class="num">${fmt(ci)}</td>
+          </tr>`;
+        }).join("")}</tbody>`;
+      table.querySelectorAll("[data-region-target]").forEach(input => input.addEventListener("change", () => {
+        state.regionRules[input.dataset.regionTarget].targetManagers = Number(input.value || 1);
+        validateInputs();
+        recalcIfReady();
+      }));
+      table.querySelectorAll("[data-region-target]").forEach(input => input.addEventListener("input", () => {
+        state.regionRules[input.dataset.regionTarget].targetManagers = Number(input.value || 1);
+        validateInputs();
+        scheduleRecalc();
+      }));
+      table.querySelectorAll("[data-region-one]").forEach(input => input.addEventListener("change", () => {
+        state.regionRules[input.dataset.regionOne].allowOne = input.checked;
+        validateInputs();
+        recalcIfReady();
+      }));
+      table.querySelectorAll("[data-region-priority]").forEach(input => input.addEventListener("change", () => {
+        state.regionRules[input.dataset.regionPriority].priority = Number(input.value || 1);
+        recalcIfReady();
+      }));
+      table.querySelectorAll("[data-region-priority]").forEach(input => input.addEventListener("input", () => {
+        state.regionRules[input.dataset.regionPriority].priority = Number(input.value || 1);
+        scheduleRecalc();
+      }));
+    }
+
+    function getParams() {
+      return {
+        threshold: Number(el("threshold").value || 70) / 100,
+        seed: Number(el("seed").value || 1),
+        mode: el("ownership-mode").value,
+        maxRegions: Number(el("max-regions").value || 2),
+        targetRegionManagers: Number(el("target-region-managers").value || 2),
+        weightLoad: Number(el("weight-load").value || 1),
+        weightBad: Number(el("weight-bad").value || 0),
+        weightException: Number(el("weight-exception").value || 1),
+        badMode: document.querySelector("input[name='bad-mode']:checked").value
+      };
+    }
+
+    function validateInputs() {
+      const warnings = [];
+      if (!state.projects.length) warnings.push("Carga los Excel para iniciar.");
+      for (const role of ["Cobro", "Ingresos"]) {
+        const active = state.managers.filter(m => m.role === role && m.active);
+        if (!active.length) warnings.push(`No hay gestores activos para ${role}.`);
+      }
+      const mode = el("ownership-mode").value;
+      for (const region of state.regions) {
+        for (const role of ["Cobro", "Ingresos"]) {
+          const covering = state.managers.filter(m => m.role === role && m.active && state.matrix[m.id]?.[region]);
+          const rule = state.regionRules[region];
+          if (!covering.length) warnings.push(`${region} no tiene gestores activos de ${role} en la matriz.`);
+          if (mode === "strict" && covering.length < rule.targetManagers && !(rule.allowOne && covering.length === 1)) {
+            warnings.push(`${region} tiene ${covering.length} gestor(es) de ${role}; deseado: ${rule.targetManagers}.`);
+          }
+        }
+      }
+      const unmatched = state.recaudoAlerts.filter(item => !item.projectKey).length;
+      if (unmatched) warnings.push(`${unmatched} filas de recaudo no tienen match con proyectos.`);
+      el("warnings").innerHTML = warnings.length ? warnings.map(w => `<li>${w}</li>`).join("") : `<li style="color: var(--green); background: #dcfce7;">Validación sin bloqueos.</li>`;
+    }
+
+    function calculateDistribution(incrementSeed = false, forcedBadMode = null) {
+      if (!state.projects.length) {
+        validateInputs();
+        return null;
+      }
+      if (incrementSeed) el("seed").value = Number(el("seed").value || 1) + 1;
+      enrichProjectsWithRecaudo();
+      const params = getParams();
+      if (forcedBadMode) params.badMode = forcedBadMode;
+      const random = seededRandom(params.seed);
+      const cobro = assignRole("Cobro", params, random);
+      const ingresos = assignRole("Ingresos", params, random);
+      state.results = buildResult(params, cobro, ingresos);
+      renderResults();
+      validateInputs();
+      return state.results;
+    }
+
+    function assignRole(role, params, random) {
+      const managers = state.managers.filter(manager => manager.role === role && manager.active);
+      const totalCapacity = managers.reduce((sum, manager) => sum + Number(manager.capacity || 1), 0);
+      const totalCi = state.projects.reduce((sum, project) => sum + project.ci, 0);
+      const targets = new Map(managers.map(manager => [manager.id, totalCi * (manager.capacity || 1) / totalCapacity]));
+      const totals = new Map(managers.map(manager => [manager.id, { ci: 0, badCount: 0, badCi: 0, projects: 0, regions: new Set(), exceptions: 0 }]));
+      const assignment = new Map();
+      const sorted = [...state.projects].sort((a, b) => {
+        const aBad = params.badMode === "with" && a.isBad ? 1 : 0;
+        const bBad = params.badMode === "with" && b.isBad ? 1 : 0;
+        return bBad - aBad || b.ci - a.ci || random() - 0.5;
+      });
+      for (const project of sorted) {
+        const candidateManagers = managers.filter(manager => params.mode === "flex" || state.matrix[manager.id]?.[project.region]);
+        const usable = candidateManagers.length ? candidateManagers : managers;
+        let best = null;
+        for (const manager of usable) {
+          const allowed = !!state.matrix[manager.id]?.[project.region];
+          const current = totals.get(manager.id);
+          const nextCi = current.ci + project.ci;
+          const target = targets.get(manager.id) || 1;
+          const nextBadCount = current.badCount + (project.isBad ? 1 : 0);
+          const nextBadCi = current.badCi + (project.isBad ? project.ci : 0);
+          const nextRegions = new Set(current.regions);
+          nextRegions.add(project.region);
+          const regionOverflow = Math.max(0, nextRegions.size - params.maxRegions);
+          const exception = allowed ? 0 : 1;
+          const loadScore = Math.pow((nextCi - target) / target, 2) * params.weightLoad;
+          const badScore = params.badMode === "with" ? (nextBadCount * 0.42 + nextBadCi / Math.max(1, totalCi) * 3) * params.weightBad : 0;
+          const regionScore = regionOverflow * 60 + exception * (params.mode === "strict" ? 10000 : 8 * params.weightException);
+          const projectScore = current.projects * 0.015;
+          const score = shuffleTie(loadScore + badScore + regionScore + projectScore, random);
+          if (!best || score < best.score) best = { manager, score, allowed };
+        }
+        assignment.set(project.key, { managerId: best.manager.id, managerName: best.manager.name, role, allowed: best.allowed });
+        const current = totals.get(best.manager.id);
+        current.ci += project.ci;
+        current.badCount += project.isBad ? 1 : 0;
+        current.badCi += project.isBad ? project.ci : 0;
+        current.projects += 1;
+        current.regions.add(project.region);
+        current.exceptions += best.allowed ? 0 : 1;
+      }
+      return improveRoleAssignment(role, params, assignment, managers, targets, random);
+    }
+
+    function improveRoleAssignment(role, params, assignment, managers, targets, random) {
+      let best = new Map(assignment);
+      let bestScore = roleScore(best, params, managers, targets);
+      let improved = true;
+      let loops = 0;
+      while (improved && loops < 250) {
+        improved = false;
+        loops += 1;
+        const candidates = [...state.projects].sort((a, b) => b.ci - a.ci || random() - 0.5);
+        for (const project of candidates) {
+          const current = best.get(project.key);
+          const allowedManagers = managers.filter(manager => params.mode === "flex" || state.matrix[manager.id]?.[project.region]);
+          for (const manager of allowedManagers) {
+            if (manager.id === current.managerId) continue;
+            const candidate = new Map(best);
+            candidate.set(project.key, { managerId: manager.id, managerName: manager.name, role, allowed: !!state.matrix[manager.id]?.[project.region] });
+            const score = roleScore(candidate, params, managers, targets);
+            if (score + 0.000001 < bestScore) {
+              best = candidate;
+              bestScore = score;
+              improved = true;
+              break;
+            }
+          }
+          if (improved) break;
+        }
+      }
+      return best;
+    }
+
+    function roleScore(assignment, params, managers, targets) {
+      const byManager = summarizeAssignment(assignment, managers);
+      let score = 0;
+      const totalBad = state.projects.filter(p => p.isBad).length || 1;
+      const badTarget = totalBad / Math.max(1, managers.length);
+      for (const manager of managers) {
+        const item = byManager.get(manager.id);
+        const target = targets.get(manager.id) || 1;
+        score += Math.pow((item.ci - target) / target, 2) * params.weightLoad;
+        if (params.badMode === "with") score += Math.pow((item.badCount - badTarget) / badTarget, 2) * params.weightBad;
+        score += Math.max(0, item.regions.size - params.maxRegions) * 60;
+        score += item.exceptions * (params.mode === "strict" ? 10000 : 8 * params.weightException);
+      }
+      return score;
+    }
+
+    function summarizeAssignment(assignment, managers) {
+      const summary = new Map(managers.map(manager => [manager.id, { ci: 0, und: 0, projects: 0, badCount: 0, badCi: 0, regions: new Set(), exceptions: 0 }]));
+      for (const project of state.projects) {
+        const assigned = assignment.get(project.key);
+        const item = summary.get(assigned.managerId);
+        item.ci += project.ci;
+        item.und += project.und;
+        item.projects += 1;
+        item.badCount += project.isBad ? 1 : 0;
+        item.badCi += project.isBad ? project.ci : 0;
+        item.regions.add(project.region);
+        item.exceptions += assigned.allowed ? 0 : 1;
+      }
+      return summary;
+    }
+
+    function buildResult(params, cobroAssignment, ingresosAssignment) {
+      const projectRows = state.projects.map(project => {
+        const cobro = cobroAssignment.get(project.key);
+        const ingresos = ingresosAssignment.get(project.key);
+        return {
+          ...project,
+          cobroPropuesto: cobro.managerName,
+          ingresosPropuesto: ingresos.managerName,
+          cobroExcepcion: !cobro.allowed,
+          ingresosExcepcion: !ingresos.allowed
+        };
+      });
+      return {
+        params,
+        projectRows,
+        summary: buildSummary(projectRows),
+        regional: buildRegional(projectRows),
+        details: buildDetails(projectRows),
+        alerts: buildAlerts(projectRows),
+        diagnostics: state.regionalDiagnostics
+      };
+    }
+
+    function buildSummary(projectRows) {
+      const output = [];
+      for (const [role, field, exField] of [["Cobro", "cobroPropuesto", "cobroExcepcion"], ["Ingresos", "ingresosPropuesto", "ingresosExcepcion"]]) {
+        const managers = state.managers.filter(m => m.role === role && m.active);
+        const totalCi = projectRows.reduce((sum, p) => sum + p.ci, 0);
+        const totalCapacity = managers.reduce((sum, m) => sum + m.capacity, 0);
+        for (const manager of managers) {
+          const rows = projectRows.filter(p => p[field] === manager.name);
+          const target = totalCi * manager.capacity / totalCapacity;
+          const ci = rows.reduce((sum, p) => sum + p.ci, 0);
+          output.push({
+            rol: role,
+            gestor: manager.name,
+            proyectos: rows.length,
+            und: rows.reduce((sum, p) => sum + p.und, 0),
+            ci,
+            objetivo: target,
+            desviacion: ci - target,
+            desviacionPct: target ? ci / target - 1 : 0,
+            morosos: rows.filter(p => p.isBad).length,
+            ciMoroso: rows.filter(p => p.isBad).reduce((sum, p) => sum + p.ci, 0),
+            regionales: Array.from(new Set(rows.map(p => p.region))).join(", "),
+            excepciones: rows.filter(p => p[exField]).length
+          });
+        }
+      }
+      return output;
+    }
+
+    function buildRegional(projectRows) {
+      const output = [];
+      for (const [role, field, exField] of [["Cobro", "cobroPropuesto", "cobroExcepcion"], ["Ingresos", "ingresosPropuesto", "ingresosExcepcion"]]) {
+        for (const manager of state.managers.filter(m => m.role === role && m.active)) {
+          for (const region of state.regions) {
+            const rows = projectRows.filter(p => p[field] === manager.name && p.region === region);
+            if (!rows.length) continue;
+            output.push({
+              rol: role,
+              gestor: manager.name,
+              regional: region,
+              proyectos: rows.length,
+              und: rows.reduce((sum, p) => sum + p.und, 0),
+              ci: rows.reduce((sum, p) => sum + p.ci, 0),
+              morosos: rows.filter(p => p.isBad).length,
+              ciMoroso: rows.filter(p => p.isBad).reduce((sum, p) => sum + p.ci, 0),
+              permitido: state.matrix[manager.id]?.[region] ? "Sí" : "No",
+              excepciones: rows.filter(p => p[exField]).length
+            });
+          }
+        }
+      }
+      return output;
+    }
+
+    function buildDetails(projectRows) {
+      const byProject = new Map(projectRows.map(p => [p.key, p]));
+      return state.detailRows.map(row => {
+        const project = byProject.get(normalize(row.macro));
+        return {
+          macro: row.macro,
+          etapa: row.stage,
+          regional: row.region,
+          cobroActual: row.cobroActual,
+          cobroPropuesto: project?.cobroPropuesto || "",
+          ingresosActual: row.ingresosActual,
+          ingresosPropuesto: project?.ingresosPropuesto || "",
+          fiduciaria: row.fiduciaria,
+          tipo: row.tipo,
+          und: row.und,
+          ci: row.ci,
+          moroso: project?.isBad ? "Sí" : "No",
+          severidad: project?.severity || ""
+        };
+      });
+    }
+
+    function buildAlerts(projectRows) {
+      const byProject = new Map(projectRows.map(p => [p.key, p]));
+      return state.recaudoAlerts.map(alert => {
+        const project = alert.projectKey ? byProject.get(alert.projectKey) : null;
+        return {
+          proyectoRecaudo: alert.sourceName,
+          proyectoDistribucion: project?.name || "",
+          match: alert.match,
+          enero: alert.jan,
+          febrero: alert.feb,
+          marzo: alert.mar,
+          acumulado: alert.accumulated,
+          moroso: alert.accumulated < getParams().threshold ? "Sí" : "No",
+          severidad: project?.severity || (alert.accumulated < 0.5 ? "Crítico" : "Normal"),
+          gestorCobro: project?.cobroPropuesto || "",
+          gestorIngresos: project?.ingresosPropuesto || "",
+          ci: project?.ci || "",
+          nota: alert.note
+        };
+      });
+    }
+
+    function renderResults() {
+      if (!state.results) return;
+      el("seed-label").textContent = `Semilla: ${state.results.params.seed}`;
+      el("mode-label").textContent = `Modo: ${state.results.params.mode === "strict" ? "Rígido regional" : "Flexible balanceado"} | ${state.results.params.badMode === "with" ? "Con morosos" : "Sin morosos"}`;
+      renderDashboard();
+      renderActiveTable();
+    }
+
+    function renderDashboard() {
+      const result = state.results;
+      if (!result) {
+        el("dashboard-subtitle").textContent = "Calcula una distribución para ver resultados.";
+        el("kpis").innerHTML = "";
+        el("bars-cobro").innerHTML = `<div class="empty">Sin cálculo todavía.</div>`;
+        el("bars-ingresos").innerHTML = `<div class="empty">Sin cálculo todavía.</div>`;
+        return;
+      }
+      const totalCi = result.projectRows.reduce((sum, p) => sum + p.ci, 0);
+      const badCount = result.projectRows.filter(p => p.isBad).length;
+      const exceptions = result.summary.reduce((sum, row) => sum + row.excepciones, 0);
+      el("dashboard-subtitle").textContent = `Escenario ${result.params.badMode === "with" ? "con" : "sin"} morosos, umbral ${pct(result.params.threshold)}.`;
+      const cards = [
+        ["Proyectos reales", result.projectRows.length],
+        ["Und. saldo CI", fmt(totalCi)],
+        ["Umbral morosidad", pct(result.params.threshold)],
+        ["Proyectos morosos", badCount],
+        ["Regionales", state.regions.length],
+        ["Excepciones", exceptions]
+      ];
+      el("kpis").innerHTML = cards.map(([label, value]) => `<div class="kpi"><span>${label}</span><strong>${value}</strong></div>`).join("");
+      renderBars("bars-cobro", result.summary.filter(row => row.rol === "Cobro"));
+      renderBars("bars-ingresos", result.summary.filter(row => row.rol === "Ingresos"));
+    }
+
+    function renderBars(id, rows) {
+      const maxValue = Math.max(...rows.map(row => row.ci), ...rows.map(row => row.objetivo), 1);
+      el(id).innerHTML = rows.map(row => {
+        const width = Math.max(2, Math.min(100, row.ci / maxValue * 100));
+        const target = Math.max(0, Math.min(100, row.objetivo / maxValue * 100));
+        return `<div class="bar-row">
+          <strong>${row.gestor}</strong>
+          <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div><div class="bar-target" style="left:${target}%"></div></div>
+          <span>${fmt(row.ci)} (${pct(row.desviacionPct)}) · M:${row.morosos}</span>
+        </div>`;
+      }).join("") || `<div class="empty">Sin datos.</div>`;
+    }
+
+    function renderActiveTable() {
+      if (!state.results) {
+        el("results-table").innerHTML = `<tr><td class="empty">Calcula una distribución para ver resultados.</td></tr>`;
+        return;
+      }
+      const tab = state.activeTab;
+      const map = {
+        summary: { rows: state.results.summary, headers: ["rol", "gestor", "proyectos", "und", "ci", "objetivo", "desviacion", "desviacionPct", "morosos", "ciMoroso", "regionales", "excepciones"] },
+        regional: { rows: state.results.regional, headers: ["rol", "gestor", "regional", "proyectos", "und", "ci", "morosos", "ciMoroso", "permitido", "excepciones"] },
+        projects: { rows: state.results.projectRows.map(project => ({
+          macroproyecto: project.name,
+          regional: project.region,
+          etapas: project.stages,
+          und: project.und,
+          ci: project.ci,
+          cobroActual: managerList(project.currentCobro),
+          cobroPropuesto: project.cobroPropuesto,
+          ingresosActual: managerList(project.currentIngresos),
+          ingresosPropuesto: project.ingresosPropuesto,
+          moroso: project.isBad ? "Sí" : "No",
+          acumulado: project.recaudo?.accumulated ?? "",
+          severidad: project.severity,
+          excepcionCobro: project.cobroExcepcion ? "Sí" : "No",
+          excepcionIngresos: project.ingresosExcepcion ? "Sí" : "No"
+        })), headers: ["macroproyecto", "regional", "etapas", "und", "ci", "cobroActual", "cobroPropuesto", "ingresosActual", "ingresosPropuesto", "moroso", "acumulado", "severidad", "excepcionCobro", "excepcionIngresos"] },
+        details: { rows: state.results.details, headers: ["macro", "etapa", "regional", "cobroActual", "cobroPropuesto", "ingresosActual", "ingresosPropuesto", "fiduciaria", "tipo", "und", "ci", "moroso", "severidad"] },
+        alerts: { rows: state.results.alerts, headers: ["proyectoRecaudo", "proyectoDistribucion", "match", "enero", "febrero", "marzo", "acumulado", "moroso", "severidad", "gestorCobro", "gestorIngresos", "ci", "nota"] },
+        diag: { rows: state.results.diagnostics.map(row => ({ regional: row.sourceName, enero: row.jan, febrero: row.feb, marzo: row.mar, acumulado: row.accumulated, mesesBajos: row.lowMonths, nota: row.note })), headers: ["regional", "enero", "febrero", "marzo", "acumulado", "mesesBajos", "nota"] }
+      };
+      const config = map[tab];
+      renderTable(el("results-table"), config.headers, config.rows);
+    }
+
+    function renderTable(table, headers, rows) {
+      if (!rows.length) {
+        table.innerHTML = `<tr><td class="empty">Sin datos para esta vista.</td></tr>`;
+        return;
+      }
+      table.innerHTML = `<thead><tr>${headers.map(header => `<th>${labelFor(header)}</th>`).join("")}</tr></thead>
+        <tbody>${rows.map(row => `<tr>${headers.map(header => `<td class="${typeof row[header] === "number" ? "num" : ""}">${formatCell(header, row[header])}</td>`).join("")}</tr>`).join("")}</tbody>`;
+    }
+
+    function labelFor(key) {
+      const labels = {
+        ci: "Und. saldo CI",
+        und: "Und. vendidas",
+        ciMoroso: "CI moroso",
+        desviacionPct: "% desviación",
+        proyectoRecaudo: "Proyecto base recaudo",
+        proyectoDistribucion: "Proyecto distribución"
+      };
+      return labels[key] || key.replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase());
+    }
+
+    function formatCell(key, value) {
+      if (value === null || value === undefined || value === "") return "";
+      if (["enero", "febrero", "marzo", "acumulado", "desviacionPct"].includes(key)) return pct(value);
+      if (typeof value === "number") return fmt(value);
+      if (value === "Sí") return `<span class="tag green">Sí</span>`;
+      if (value === "No") return `<span class="tag">No</span>`;
+      if (value === "Crítico") return `<span class="tag red">Crítico</span>`;
+      if (value === "Alto") return `<span class="tag amber">Alto</span>`;
+      return String(value);
+    }
+
+    function compareScenarios() {
+      const original = document.querySelector("input[name='bad-mode']:checked").value;
+      const withBad = calculateDistribution(false, "with");
+      const withoutBad = calculateDistribution(false, "without");
+      state.comparison = { withBad, withoutBad };
+      document.querySelector(`input[name='bad-mode'][value='${original}']`).checked = true;
+      calculateDistribution(false, original);
+      const withSpread = spreadMetric(withBad.summary);
+      const withoutSpread = spreadMetric(withoutBad.summary);
+      alert(`Comparación lista:\nCon morosos: dispersión ${withSpread}\nSin morosos: dispersión ${withoutSpread}\nRevisa el dashboard alternando la vista.`);
+    }
+
+    function spreadMetric(summary) {
+      const values = summary.map(row => Math.abs(row.desviacionPct));
+      return pct(values.reduce((sum, value) => sum + value, 0) / Math.max(1, values.length));
+    }
+
+    function exportWorkbook() {
+      if (!state.results) calculateDistribution();
+      if (!state.results) return;
+      const wb = XLSX.utils.book_new();
+      const result = state.results;
+      addSheet(wb, "Dashboard", [
+        ["Métrica", "Valor"],
+        ["Modo", result.params.mode === "strict" ? "Rígido regional" : "Flexible balanceado"],
+        ["Vista", result.params.badMode === "with" ? "Con morosos" : "Sin morosos"],
+        ["Umbral morosidad", result.params.threshold],
+        ["Semilla", result.params.seed],
+        ["Proyectos reales", result.projectRows.length],
+        ["Und. saldo CI", result.projectRows.reduce((sum, p) => sum + p.ci, 0)],
+        ["Proyectos morosos", result.projectRows.filter(p => p.isBad).length]
+      ]);
+      addJsonSheet(wb, "Parametros", [
+        { parametro: "Umbral morosidad", valor: result.params.threshold },
+        { parametro: "Modo", valor: result.params.mode },
+        { parametro: "Vista morosos", valor: result.params.badMode },
+        { parametro: "Máx regionales gestor", valor: result.params.maxRegions },
+        { parametro: "Gestores deseados regional", valor: result.params.targetRegionManagers },
+        { parametro: "Semilla", valor: result.params.seed }
+      ]);
+      addJsonSheet(wb, "Criterios", [
+        { prioridad: 1, criterio: "Proyecto real", definicion: "Se asignan macroproyectos reales; filas resumen regionales solo son diagnóstico." },
+        { prioridad: 2, criterio: "Etapas juntas", definicion: "Todas las etapas del macroproyecto quedan con el mismo gestor." },
+        { prioridad: 3, criterio: "Carga operativa", definicion: "Peso principal: Pend. Cuota inicial / unidades con saldo CI." },
+        { prioridad: 4, criterio: "Morosidad", definicion: "Por defecto proyecto malo si cumplimiento acumulado < 70%." },
+        { prioridad: 5, criterio: "Propiedad regional", definicion: "Modo rígido respeta matriz; modo flexible penaliza excepciones." }
+      ]);
+      addJsonSheet(wb, "Matriz gestor-regional", matrixExportRows());
+      addJsonSheet(wb, "Resumen gestores", result.summary);
+      addJsonSheet(wb, "Asignacion proyectos", result.projectRows.map(project => ({
+        macroproyecto: project.name,
+        regional: project.region,
+        etapas: project.stages,
+        und_vendidas: project.und,
+        und_saldo_ci: project.ci,
+        cobro_actual: managerList(project.currentCobro),
+        cobro_propuesto: project.cobroPropuesto,
+        ingresos_actual: managerList(project.currentIngresos),
+        ingresos_propuesto: project.ingresosPropuesto,
+        moroso: project.isBad ? "Sí" : "No",
+        acumulado: project.recaudo?.accumulated ?? "",
+        severidad: project.severity,
+        excepcion_cobro: project.cobroExcepcion ? "Sí" : "No",
+        excepcion_ingresos: project.ingresosExcepcion ? "Sí" : "No"
+      })));
+      addJsonSheet(wb, "Detalle etapas", result.details);
+      addJsonSheet(wb, "Balance regional", result.regional);
+      addJsonSheet(wb, "Alertas recaudo", result.alerts);
+      addJsonSheet(wb, "Diagnostico regional", result.diagnostics.map(row => ({
+        regional: row.sourceName,
+        enero: row.jan,
+        febrero: row.feb,
+        marzo: row.mar,
+        acumulado: row.accumulated,
+        meses_bajos: row.lowMonths,
+        nota: row.note
+      })));
+      XLSX.writeFile(wb, `distribucion_marisol_semilla_${result.params.seed}.xlsx`);
+    }
+
+    function matrixExportRows() {
+      return state.managers.map(manager => {
+        const row = { rol: manager.role, gestor: manager.name, activo: manager.active ? "Sí" : "No", capacidad: manager.capacity };
+        for (const region of state.regions) row[region] = state.matrix[manager.id]?.[region] ? "Sí" : "No";
+        return row;
+      });
+    }
+
+    function addSheet(wb, name, rows) {
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), name);
+    }
+
+    function addJsonSheet(wb, name, rows) {
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), name);
+    }
+
+    function openInfo(key) {
+      const lines = infoContent[key] || [];
+      el("modal-title").textContent = "Ayuda";
+      el("modal-body").innerHTML = `<ul>${lines.map(line => `<li>${line}</li>`).join("")}</ul>`;
+      el("info-modal").classList.add("open");
+    }
+
+    el("projects-file").addEventListener("change", handleFiles);
+    el("recaudo-file").addEventListener("change", handleFiles);
+    el("btn-load-cache").addEventListener("click", loadCachedFiles);
+    el("btn-clear-cache").addEventListener("click", clearCachedFiles);
+    el("btn-add-cobro").addEventListener("click", () => addManualManager("Cobro"));
+    el("btn-add-ingresos").addEventListener("click", () => addManualManager("Ingresos"));
+    el("btn-calc").addEventListener("click", () => calculateDistribution());
+    el("btn-alt").addEventListener("click", () => calculateDistribution(true));
+    el("btn-compare").addEventListener("click", compareScenarios);
+    el("btn-export").addEventListener("click", exportWorkbook);
+    el("threshold").addEventListener("change", () => {
+      enrichProjectsWithRecaudo();
+      if (state.projects.length) validateInputs();
+      recalcIfReady();
+    });
+    el("threshold").addEventListener("input", () => {
+      enrichProjectsWithRecaudo();
+      if (state.projects.length) validateInputs();
+      scheduleRecalc();
+    });
+    el("target-region-managers").addEventListener("change", () => {
+      for (const region of state.regions) state.regionRules[region].targetManagers = Number(el("target-region-managers").value || 2);
+      renderRegionRulesTable();
+      validateInputs();
+      recalcIfReady();
+    });
+    el("target-region-managers").addEventListener("input", () => {
+      for (const region of state.regions) state.regionRules[region].targetManagers = Number(el("target-region-managers").value || 2);
+      validateInputs();
+      scheduleRecalc();
+    });
+    document.querySelectorAll("input[name='bad-mode']").forEach(input => input.addEventListener("change", () => calculateDistribution()));
+    ["seed", "max-regions", "weight-load", "weight-bad", "weight-exception"].forEach(id => {
+      el(id).addEventListener("change", recalcIfReady);
+      el(id).addEventListener("input", scheduleRecalc);
+    });
+    el("ownership-mode").addEventListener("change", () => {
+      validateInputs();
+      recalcIfReady();
+    });
+    document.querySelectorAll(".tab").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+        button.classList.add("active");
+        state.activeTab = button.dataset.tab;
+        renderActiveTable();
+      });
+    });
+    document.querySelectorAll("[data-info]").forEach(button => button.addEventListener("click", () => openInfo(button.dataset.info)));
+    el("modal-close").addEventListener("click", () => el("info-modal").classList.remove("open"));
+    el("info-modal").addEventListener("click", (event) => {
+      if (event.target.id === "info-modal") el("info-modal").classList.remove("open");
+    });
+
+    renderConfiguration();
+    renderActiveTable();
+    renderDashboard();
+    refreshCacheStatus();
+  </script>
+</body>
+</html>

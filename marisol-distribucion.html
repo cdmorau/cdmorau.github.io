@@ -500,6 +500,7 @@
       <button class="btn green" id="btn-export">Descargar Excel</button>
       <span class="tag blue" id="seed-label">Semilla: 1</span>
       <span class="tag" id="mode-label">Modo: Rígido regional</span>
+      <span class="tag green" id="calc-label">Sin cálculo</span>
     </div>
   </nav>
 
@@ -758,6 +759,16 @@
 
     function shuffleTie(value, random) {
       return value + random() * 0.000001;
+    }
+
+    function stableNoise(...parts) {
+      const text = parts.join("|");
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i += 1) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return ((hash >>> 0) / 4294967295) - 0.5;
     }
 
     function readWorkbook(file) {
@@ -1474,7 +1485,8 @@
           const badScore = params.badMode === "with" ? (nextBadCount * 0.42 + nextBadCi / Math.max(1, totalCi) * 3) * params.weightBad : 0;
           const regionScore = regionOverflow * 60 + exception * (params.mode === "strict" ? 10000 : 8 * params.weightException);
           const projectScore = current.projects * 0.015;
-          const score = shuffleTie(loadScore + badScore + regionScore + projectScore, random);
+          const alternativeScore = stableNoise(role, project.key, manager.id, params.seed, params.badMode) * 0.08;
+          const score = shuffleTie(loadScore + badScore + regionScore + projectScore + alternativeScore, random);
           if (!best || score < best.score) best = { manager, score, allowed };
         }
         assignment.set(project.key, { managerId: best.manager.id, managerName: best.manager.name, role, allowed: best.allowed });
@@ -1491,7 +1503,7 @@
 
     function improveRoleAssignment(role, params, assignment, managers, targets, random) {
       let best = new Map(assignment);
-      let bestScore = roleScore(best, params, managers, targets);
+      let bestScore = roleScore(best, params, managers, targets, role);
       let improved = true;
       let loops = 0;
       while (improved && loops < 250) {
@@ -1505,7 +1517,7 @@
             if (manager.id === current.managerId) continue;
             const candidate = new Map(best);
             candidate.set(project.key, { managerId: manager.id, managerName: manager.name, role, allowed: !!state.matrix[manager.id]?.[project.region] });
-            const score = roleScore(candidate, params, managers, targets);
+            const score = roleScore(candidate, params, managers, targets, role);
             if (score + 0.000001 < bestScore) {
               best = candidate;
               bestScore = score;
@@ -1519,7 +1531,7 @@
       return best;
     }
 
-    function roleScore(assignment, params, managers, targets) {
+    function roleScore(assignment, params, managers, targets, role) {
       const byManager = summarizeAssignment(assignment, managers);
       let score = 0;
       const totalBad = state.projects.filter(p => p.isBad).length || 1;
@@ -1531,6 +1543,10 @@
         if (params.badMode === "with") score += Math.pow((item.badCount - badTarget) / badTarget, 2) * params.weightBad;
         score += Math.max(0, item.regions.size - params.maxRegions) * 60;
         score += item.exceptions * (params.mode === "strict" ? 10000 : 8 * params.weightException);
+      }
+      for (const project of state.projects) {
+        const assigned = assignment.get(project.key);
+        if (assigned) score += stableNoise(role, project.key, assigned.managerId, params.seed, params.badMode) * 0.08;
       }
       return score;
     }
@@ -1676,6 +1692,7 @@
       if (!state.results) return;
       el("seed-label").textContent = `Semilla: ${state.results.params.seed}`;
       el("mode-label").textContent = `Modo: ${state.results.params.mode === "strict" ? "Rígido regional" : "Flexible balanceado"} | ${state.results.params.badMode === "with" ? "Con morosos" : "Sin morosos"}`;
+      el("calc-label").textContent = `Recalculado: ${new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
       renderDashboard();
       renderActiveTable();
     }

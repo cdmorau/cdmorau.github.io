@@ -699,6 +699,7 @@
       regions: [],
       matrix: {},
       regionRules: {},
+      manualOverrides: {},
       results: null,
       activeTab: "summary",
       comparison: null
@@ -1151,6 +1152,7 @@
       state.recaudoAlerts = recaudoParsed.alerts;
       state.regionalDiagnostics = recaudoParsed.diagnostics;
       state.results = null;
+      state.manualOverrides = {};
       enrichProjectsWithRecaudo();
       buildInitialConfig();
       renderConfiguration();
@@ -1571,12 +1573,25 @@
       const projectRows = state.projects.map(project => {
         const cobro = cobroAssignment.get(project.key);
         const ingresos = ingresosAssignment.get(project.key);
+        const override = state.manualOverrides[project.key] || {};
+        const cobroManual = !!override.cobro;
+        const ingresosManual = !!override.ingresos;
+        const cobroName = override.cobro || cobro.managerName;
+        const ingresosName = override.ingresos || ingresos.managerName;
+        const cobroManager = state.managers.find(manager => manager.role === "Cobro" && manager.name === cobroName);
+        const ingresosManager = state.managers.find(manager => manager.role === "Ingresos" && manager.name === ingresosName);
+        const cobroAllowed = cobroManual ? !!state.matrix[cobroManager?.id]?.[project.region] : cobro.allowed;
+        const ingresosAllowed = ingresosManual ? !!state.matrix[ingresosManager?.id]?.[project.region] : ingresos.allowed;
         return {
           ...project,
-          cobroPropuesto: cobro.managerName,
-          ingresosPropuesto: ingresos.managerName,
-          cobroExcepcion: !cobro.allowed,
-          ingresosExcepcion: !ingresos.allowed
+          cobroAutomatico: cobro.managerName,
+          ingresosAutomatico: ingresos.managerName,
+          cobroPropuesto: cobroName,
+          ingresosPropuesto: ingresosName,
+          cobroManual,
+          ingresosManual,
+          cobroExcepcion: !cobroAllowed,
+          ingresosExcepcion: !ingresosAllowed
         };
       });
       return {
@@ -1745,28 +1760,82 @@
       const map = {
         summary: { rows: state.results.summary, headers: ["rol", "gestor", "proyectos", "und", "ci", "objetivo", "desviacion", "desviacionPct", "morosos", "ciMoroso", "regionales", "excepciones"] },
         regional: { rows: state.results.regional, headers: ["rol", "gestor", "regional", "proyectos", "und", "ci", "morosos", "ciMoroso", "permitido", "excepciones"] },
-        projects: { rows: state.results.projectRows.map(project => ({
-          macroproyecto: project.name,
-          regional: project.region,
-          etapas: project.stages,
-          und: project.und,
-          ci: project.ci,
-          cobroActual: managerList(project.currentCobro),
-          cobroPropuesto: project.cobroPropuesto,
-          ingresosActual: managerList(project.currentIngresos),
-          ingresosPropuesto: project.ingresosPropuesto,
-          moroso: project.isBad ? "Sí" : "No",
-          acumulado: project.recaudo?.accumulated ?? "",
-          severidad: project.severity,
-          excepcionCobro: project.cobroExcepcion ? "Sí" : "No",
-          excepcionIngresos: project.ingresosExcepcion ? "Sí" : "No"
-        })), headers: ["macroproyecto", "regional", "etapas", "und", "ci", "cobroActual", "cobroPropuesto", "ingresosActual", "ingresosPropuesto", "moroso", "acumulado", "severidad", "excepcionCobro", "excepcionIngresos"] },
+        projects: { custom: true },
         details: { rows: state.results.details, headers: ["macro", "etapa", "regional", "cobroActual", "cobroPropuesto", "ingresosActual", "ingresosPropuesto", "fiduciaria", "tipo", "und", "ci", "moroso", "severidad"] },
         alerts: { rows: state.results.alerts, headers: ["proyectoRecaudo", "proyectoDistribucion", "match", "enero", "febrero", "marzo", "acumulado", "moroso", "severidad", "gestorCobro", "gestorIngresos", "ci", "nota"] },
         diag: { rows: state.results.diagnostics.map(row => ({ regional: row.sourceName, enero: row.jan, febrero: row.feb, marzo: row.mar, acumulado: row.accumulated, mesesBajos: row.lowMonths, nota: row.note })), headers: ["regional", "enero", "febrero", "marzo", "acumulado", "mesesBajos", "nota"] }
       };
       const config = map[tab];
+      if (config.custom && tab === "projects") {
+        renderProjectEditor();
+        return;
+      }
       renderTable(el("results-table"), config.headers, config.rows);
+    }
+
+    function renderProjectEditor() {
+      const table = el("results-table");
+      const cobroManagers = state.managers.filter(manager => manager.role === "Cobro" && manager.active);
+      const ingresosManagers = state.managers.filter(manager => manager.role === "Ingresos" && manager.active);
+      const rows = state.results.projectRows;
+      table.innerHTML = `<thead><tr>
+        <th>Macroproyecto</th><th>Regional</th><th class="num">Etapas</th><th class="num">Und. saldo CI</th><th class="num">Und. vendidas</th>
+        <th>Gestor cobro propuesto</th><th>Gestor ingresos propuesto</th><th>Moroso</th><th>Acumulado</th><th>Ajuste manual</th>
+      </tr></thead><tbody>${rows.map(project => {
+        const override = state.manualOverrides[project.key] || {};
+        return `<tr>
+          <td>${project.name}</td>
+          <td>${project.region}</td>
+          <td class="num">${fmt(project.stages)}</td>
+          <td class="num"><strong>${fmt(project.ci)}</strong></td>
+          <td class="num">${fmt(project.und)}</td>
+          <td>${managerSelect("cobro", project.key, project.cobroPropuesto, cobroManagers)}</td>
+          <td>${managerSelect("ingresos", project.key, project.ingresosPropuesto, ingresosManagers)}</td>
+          <td>${formatCell("moroso", project.isBad ? "Sí" : "No")}</td>
+          <td class="num">${project.recaudo ? pct(project.recaudo.accumulated) : ""}</td>
+          <td>${project.cobroManual || project.ingresosManual ? `<span class="tag amber">Manual</span> <button class="mini-btn" data-clear-project="${project.key}">Quitar</button>` : `<span class="tag">Auto</span>`}</td>
+        </tr>`;
+      }).join("")}</tbody>`;
+
+      table.querySelectorAll("[data-project-override]").forEach(select => {
+        select.addEventListener("change", () => {
+          const projectKey = select.dataset.projectOverride;
+          const role = select.dataset.overrideRole;
+          if (!state.manualOverrides[projectKey]) state.manualOverrides[projectKey] = {};
+          state.manualOverrides[projectKey][role] = select.value;
+          applyManualOverridesAndRender();
+        });
+      });
+      table.querySelectorAll("[data-clear-project]").forEach(button => {
+        button.addEventListener("click", () => {
+          delete state.manualOverrides[button.dataset.clearProject];
+          applyManualOverridesAndRender();
+        });
+      });
+    }
+
+    function managerSelect(role, projectKey, selected, managers) {
+      return `<select data-project-override="${projectKey}" data-override-role="${role}">
+        ${managers.map(manager => `<option value="${escapeAttr(manager.name)}" ${manager.name === selected ? "selected" : ""}>${manager.name}</option>`).join("")}
+      </select>`;
+    }
+
+    function applyManualOverridesAndRender() {
+      if (!state.results) return;
+      const params = state.results.params;
+      const cobroAssignment = new Map(state.results.projectRows.map(project => {
+        const managerName = project.cobroAutomatico || project.cobroPropuesto;
+        const manager = state.managers.find(item => item.role === "Cobro" && item.name === managerName);
+        return [project.key, { managerName, allowed: !!state.matrix[manager?.id]?.[project.region] }];
+      }));
+      const ingresosAssignment = new Map(state.results.projectRows.map(project => {
+        const managerName = project.ingresosAutomatico || project.ingresosPropuesto;
+        const manager = state.managers.find(item => item.role === "Ingresos" && item.name === managerName);
+        return [project.key, { managerName, allowed: !!state.matrix[manager?.id]?.[project.region] }];
+      }));
+      state.results = buildResult(params, cobroAssignment, ingresosAssignment);
+      renderResults();
+      validateInputs();
     }
 
     function renderTable(table, headers, rows) {
@@ -1858,8 +1927,10 @@
         und_saldo_ci: project.ci,
         cobro_actual: managerList(project.currentCobro),
         cobro_propuesto: project.cobroPropuesto,
+        cobro_manual: project.cobroManual ? "Sí" : "No",
         ingresos_actual: managerList(project.currentIngresos),
         ingresos_propuesto: project.ingresosPropuesto,
+        ingresos_manual: project.ingresosManual ? "Sí" : "No",
         moroso: project.isBad ? "Sí" : "No",
         acumulado: project.recaudo?.accumulated ?? "",
         severidad: project.severity,
